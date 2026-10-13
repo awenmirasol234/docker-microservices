@@ -15,7 +15,7 @@ Minimal Docker Compose demo: five Express CRUD services behind an nginx reverse 
   - `/api/orders` → `order-service:3003/orders`
   - `/api/inventory` → `inventory-service:3004/inventory`
   - `/api/reviews` → `review-service:3005/reviews`
-- `postgres` — Postgres 17, one container with one database per service, persisted in the `pgdata` volume
+- `postgres-*` — five Postgres 17 containers (`postgres-users`, `postgres-products`, `postgres-orders`, `postgres-inventory`, `postgres-reviews`), one database per service, each persisted in its own `pgdata-<name>` volume
 
 ## Prerequisites
 
@@ -73,7 +73,7 @@ Note: `DATABASE_URL` must point at that service's database, and inter-service ho
 ## Adding a service
 
 1. New dir with `server.js`, `package.json` (`express` + `pg`), `Dockerfile`, `.dockerignore` (copy an existing service)
-2. `CREATE DATABASE <db>;` in `postgres/init.sql`; if the `pgdata` volume already exists, also run `docker exec docker-microservices-postgres-1 psql -U postgres -c "CREATE DATABASE <db>;"`
-3. Compose block with `DATABASE_URL` pointing at the new db + `depends_on` postgres healthy; add to nginx `depends_on`
+2. New `postgres-<name>` block with `POSTGRES_DB: <db>` and its own `pgdata-<name>` volume (the database is auto-created; no init script needed)
+3. Compose block with `DATABASE_URL` pointing at the new container + `depends_on` it healthy; add to nginx `depends_on`
 4. New `location /api/<name>` block in `nginx/nginx.conf`
 5. Document it here and in `AGENTS.md`

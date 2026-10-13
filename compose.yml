@@ -1,12 +1,68 @@
 services:
-  postgres:
+  postgres-users:
     image: postgres:17-alpine
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: users_db
     volumes:
-      - pgdata:/var/lib/postgresql/data
-      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - pgdata-users:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-products:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: products_db
+    volumes:
+      - pgdata-products:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-orders:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: orders_db
+    volumes:
+      - pgdata-orders:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-inventory:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: inventory_db
+    volumes:
+      - pgdata-inventory:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-reviews:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: reviews_db
+    volumes:
+      - pgdata-reviews:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -16,41 +72,41 @@ services:
   user-service:
     build: ./user-service
     environment:
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/users_db
+      DATABASE_URL: postgres://postgres:postgres@postgres-users:5432/users_db
     depends_on:
-      postgres:
+      postgres-users:
         condition: service_healthy
 
   product-service:
     build: ./product-service
     environment:
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/products_db
+      DATABASE_URL: postgres://postgres:postgres@postgres-products:5432/products_db
     depends_on:
-      postgres:
+      postgres-products:
         condition: service_healthy
 
   order-service:
     build: ./order-service
     environment:
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/orders_db
+      DATABASE_URL: postgres://postgres:postgres@postgres-orders:5432/orders_db
     depends_on:
-      postgres:
+      postgres-orders:
         condition: service_healthy
 
   inventory-service:
     build: ./inventory-service
     environment:
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/inventory_db
+      DATABASE_URL: postgres://postgres:postgres@postgres-inventory:5432/inventory_db
     depends_on:
-      postgres:
+      postgres-inventory:
         condition: service_healthy
 
   review-service:
     build: ./review-service
     environment:
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/reviews_db
+      DATABASE_URL: postgres://postgres:postgres@postgres-reviews:5432/reviews_db
     depends_on:
-      postgres:
+      postgres-reviews:
         condition: service_healthy
 
   nginx:
@@ -65,4 +121,8 @@ services:
       - review-service
 
 volumes:
-  pgdata:
+  pgdata-users:
+  pgdata-products:
+  pgdata-orders:
+  pgdata-inventory:
+  pgdata-reviews:
