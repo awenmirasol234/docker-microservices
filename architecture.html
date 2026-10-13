@@ -475,6 +475,7 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
   var SERVICES = ['users', 'products', 'orders', 'inventory', 'reviews'];
   var HOP = 500;
   var LOOP_INTERVAL = 4000;
+  var DOUBLE_CHANCE = 0.3;
   var RESPONSE_GAP = 250;
   var demoTimer = null;
   var pending = [];
@@ -489,7 +490,13 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
   }
   function triggerRandomLoop(){
     if (document.hidden) return;
-    triggerLoop(SERVICES[Math.floor(Math.random() * SERVICES.length)]);
+    var a = SERVICES[Math.floor(Math.random() * SERVICES.length)];
+    triggerLoop(a);
+    if (Math.random() < DOUBLE_CHANCE) {
+      var b = a;
+      while (b === a) b = SERVICES[Math.floor(Math.random() * SERVICES.length)];
+      triggerLoop(b);
+    }
   }
   function syncDemoBtn(){
     var on = demoTimer !== null;
