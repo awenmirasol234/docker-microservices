@@ -1,21 +1,25 @@
 # docker-microservices
 
-Minimal Docker Compose demo: five Express CRUD services behind an nginx reverse proxy.
+Minimal Docker Compose demo: five Express CRUD services behind an nginx reverse proxy (11 containers total: 5 app + 5 Postgres + nginx).
 
 ## Architecture
 
-- `user-service` — `GET/POST/PUT/DELETE /users`, listens `3001`, db `users_db`
-- `product-service` — `GET/POST/PUT/DELETE /products`, listens `3002`, db `products_db`
-- `order-service` — `GET/POST/PUT/DELETE /orders`, listens `3003`, db `orders_db`
-- `inventory-service` — `GET/POST/PUT/DELETE /inventory`, listens `3004`, db `inventory_db`
-- `review-service` — `GET/POST/PUT/DELETE /reviews`, listens `3005`, db `reviews_db`
-- `nginx` — reverse proxy, listens `80` (host `8000`)
-  - `/api/users` → `user-service:3001/users`
+- `user-service` — `GET /users`, `GET /users/:id`, `POST/PUT/DELETE`, listens `3001`, db `users_db`
+- `product-service` — `GET /products`, `GET /products/:id`, `POST/PUT/DELETE`, listens `3002`, db `products_db`
+- `order-service` — `GET /orders`, `GET /orders/:id`, `POST/PUT/DELETE`, listens `3003`, db `orders_db`
+- `inventory-service` — `GET /inventory`, `GET /inventory/:id`, `POST/PUT/DELETE`, listens `3004`, db `inventory_db`
+- `review-service` — `GET /reviews`, `GET /reviews/:id`, `POST/PUT/DELETE`, listens `3005`, db `reviews_db`
+- `nginx` — reverse proxy, listens `80` (host `8000`; the only public port)
+  - `/api/users` → `user-service:3001/users` (subpaths forwarded, e.g. `/api/users/123` → `/users/123`)
   - `/api/products` → `product-service:3002/products`
   - `/api/orders` → `order-service:3003/orders`
   - `/api/inventory` → `inventory-service:3004/inventory`
   - `/api/reviews` → `review-service:3005/reviews`
-- `postgres-*` — five Postgres 17 containers (`postgres-users`, `postgres-products`, `postgres-orders`, `postgres-inventory`, `postgres-reviews`), one database per service, each persisted in its own `pgdata-<name>` volume
+- `postgres-*` — five Postgres 17 containers (`postgres-users`, `postgres-products`, `postgres-orders`, `postgres-inventory`, `postgres-reviews`), one database per service, each persisted in its own `pgdata-<name>` volume (`/var/lib/postgresql/data`)
+
+Each service connects via `DATABASE_URL=postgres://postgres:postgres@postgres-<name>:5432/<db>` and waits on its Postgres `pg_isready` healthcheck. Tables are auto-created on startup (`CREATE TABLE IF NOT EXISTS`); no migrations or init scripts.
+
+See `architecture.html` for a visual request-flow diagram (open it in a browser).
 
 ## Prerequisites
 
@@ -49,15 +53,21 @@ curl localhost:8000/api/inventory
 curl localhost:8000/api/reviews
 ```
 
+By id:
+
+```bash
+curl localhost:8000/api/users/1
+```
+
 ## API notes
 
-All services: `GET` (list + by id), `POST` (201), `PUT`, `DELETE` (204); `400` on invalid body, `404` on unknown id.
+All services return JSON; errors are `{"error": ...}` with `400` on invalid body and `404` on unknown id. `POST` returns `201`, `DELETE` returns `204`. `PUT` requires the full body (same validation as `POST`).
 
+- users: `name` — required non-empty string (trimmed)
+- products: `name` — required non-empty string; `price` — required finite number
 - orders: `user_id`, `product_id`, `quantity` — positive integers
-- inventory: `product_id` — positive integer, unique per product; `stock` — non-negative integer
-- reviews: `product_id`, `user_id` — positive integers; `rating` — integer 1–5; `comment` — optional string
-- users: `name` — required non-empty string
-- products: `name` — required non-empty string; `price` — number
+- inventory: `product_id` — positive integer, unique per product; `stock` — non-negative integer. Duplicate `product_id` returns `400 {"error":"product already has inventory"}` on `POST` and `PUT`
+- reviews: `product_id`, `user_id` — positive integers; `rating` — integer 1–5; `comment` — optional/nullable string
 
 ## Local dev (without Docker)
 
@@ -68,12 +78,36 @@ npm install
 node server.js
 ```
 
-Note: `DATABASE_URL` must point at that service's database, and inter-service hostnames (`*-service`) only resolve inside the Compose network. From the host, go through `localhost:8000/api/*`.
+Set `DATABASE_URL` to that service's database with a matching local Postgres running, e.g.:
+
+```bash
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/users_db node server.js
+```
+
+Note: inter-service hostnames (`*-service`, `postgres-*`) only resolve inside the Compose network. From the host, go through `localhost:8000/api/*`. There are no `npm start` / test scripts; use `node server.js`.
+
+## Troubleshooting
+
+```bash
+docker compose ps
+docker compose logs <service>
+docker compose restart nginx
+```
+
+Recreated app containers get new IPs that nginx caches — `restart nginx` fixes post-rebuild `502`s.
+
+Teardown:
+
+```bash
+docker compose down
+```
+
+`docker compose down -v` also deletes the `pgdata-*` volumes and all database data.
 
 ## Adding a service
 
-1. New dir with `server.js`, `package.json` (`express` + `pg`), `Dockerfile`, `.dockerignore` (copy an existing service)
-2. New `postgres-<name>` block with `POSTGRES_DB: <db>` and its own `pgdata-<name>` volume (the database is auto-created; no init script needed)
+1. New dir with `server.js`, `package.json` (`express` + `pg`), `Dockerfile` (copy an existing service; there is no `.dockerignore` or lockfile in this repo)
+2. New `postgres-<name>` block with `POSTGRES_DB: <db>` and its own `pgdata-<name>` volume (the database is auto-created; no init script needed), plus a `pg_isready` healthcheck like the others
 3. Compose block with `DATABASE_URL` pointing at the new container + `depends_on` it healthy; add to nginx `depends_on`
 4. New `location /api/<name>` block in `nginx/nginx.conf`
 5. Document it here and in `AGENTS.md`

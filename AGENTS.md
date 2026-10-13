@@ -1,24 +1,32 @@
 # AGENTS.md
 
 ## Stack
-Docker Compose + Node 24 (Express 5) + nginx reverse proxy + Postgres 17. No tests, no lint/typecheck, no CI.
+Docker Compose (`compose.yml`, 11 containers) + Node 24 (`node:24-alpine`, Express `^5.1.0`, `pg ^8.13.0`) + nginx (`nginx:alpine`) reverse proxy + Postgres 17 (`postgres:17-alpine`). No tests, no lint/typecheck, no CI, no lockfiles, no `npm start` / test scripts.
 
 ## Services
-- `user-service/server.js`: CRUD `/users`, listens `3001`, db `users_db`.
-- `product-service/server.js`: CRUD `/products`, listens `3002`, db `products_db`.
-- `order-service/server.js`: CRUD `/orders`, listens `3003`, db `orders_db`.
-- `inventory-service/server.js`: CRUD `/inventory`, listens `3004`, db `inventory_db`.
-- `review-service/server.js`: CRUD `/reviews`, listens `3005`, db `reviews_db`.
-- `nginx/nginx.conf`: listens `80` (host `8000`). `/api/<name>` -> `<name>-service:<port>/<name>` for each service.
+- `user-service/server.js`: `GET /users` + `GET /users/:id` + `POST/PUT/DELETE`, listens `3001`, db `users_db`.
+- `product-service/server.js`: `GET /products` + `GET /products/:id` + `POST/PUT/DELETE`, listens `3002`, db `products_db`.
+- `order-service/server.js`: `GET /orders` + `GET /orders/:id` + `POST/PUT/DELETE`, listens `3003`, db `orders_db`.
+- `inventory-service/server.js`: `GET /inventory` + `GET /inventory/:id` + `POST/PUT/DELETE`, listens `3004`, db `inventory_db`.
+- `review-service/server.js`: `GET /reviews` + `GET /reviews/:id` + `POST/PUT/DELETE`, listens `3005`, db `reviews_db`.
+- `nginx/nginx.conf`: listens `80` (host `8000`). `/api/<name>` plus subpaths (e.g. `/api/users/123` -> `/users/123`) -> `<name>-service:<port>/<name>` for each service. Only host port `8000` is public.
+- `postgres-<name>`: `POSTGRES_USER/PASSWORD: postgres/postgres`, `POSTGRES_DB: <db>`, `pg_isready` healthcheck, volume `pgdata-<name>` -> `/var/lib/postgresql/data`. Tables auto-created on startup via `CREATE TABLE IF NOT EXISTS`; no migrations or init scripts.
+- App wiring: `DATABASE_URL=postgres://postgres:postgres@postgres-<name>:5432/<db>`, `depends_on` postgres healthy; nginx `depends_on` all five app services.
+- Diagram: `architecture.html` (host `:8000` -> nginx `:80` -> services `:3001-3005` -> postgres `:5432`).
 
 ## Commands
 - Build + run all: `docker compose up --build`
 - Run detached: `docker compose up --build -d`
 - After rebuild: `docker compose restart nginx` (it caches upstream IPs; recreated app containers get 502s until restart)
-- Local dev without Docker (per service dir, with `DATABASE_URL` set): `npm install && node server.js`
+- Logs / status: `docker compose logs <service>`, `docker compose ps`
+- Teardown: `docker compose down` (`down -v` deletes `pgdata-*` volumes and all data)
+- Local dev without Docker (per service dir, with `DATABASE_URL` set, e.g. `postgres://postgres:postgres@localhost:5432/users_db` with a matching local Postgres running): `npm install && node server.js`
 - Verify: `curl localhost:8000/api/users`, `curl localhost:8000/api/products`, `curl localhost:8000/api/orders`, `curl localhost:8000/api/inventory`, `curl localhost:8000/api/reviews`
 
 ## Gotchas
 - No `npm start` / test scripts in any `package.json`; use `node server.js`.
-- Inter-service hostnames (`*-service`) only resolve inside Compose network, not from host.
-- `nginx.conf` maps one `location` per service (`/api/<name>` -> backend `/<name>`); adding a service needs an app block + `DATABASE_URL` + a `postgres-<name>` container with `POSTGRES_DB` and its own volume + a `location` block.
+- Inter-service hostnames (`*-service`, `postgres-*`) only resolve inside Compose network, not from host. From host, go through `localhost:8000/api/*`.
+- `nginx.conf` maps one `location` per service (`/api/<name>` -> backend `/<name>`, subpaths forwarded); adding a service needs an app block + `DATABASE_URL` + a `postgres-<name>` container with `POSTGRES_DB` and its own volume + a `location` block + nginx `depends_on`.
+- `PUT` requires the full body (same validation as `POST`); all errors are `{"error": ...}` (`400` invalid body, `404` unknown id).
+- Inventory duplicate `product_id` returns `400 {"error":"product already has inventory"}` on `POST` and `PUT`.
+- Products `price` must be a finite number; reviews `comment` is optional/nullable.
