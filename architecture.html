@@ -29,9 +29,6 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
 .expand-btn{position:absolute;top:12px;right:12px;border-radius:999px;font-family:var(--mono);font-size:12px;background:rgba(16,31,43,.88);border:1px solid var(--line);color:var(--ink);padding:8px 13px;cursor:pointer;z-index:2}
 .expand-btn:hover{border-color:var(--docker)}
 .expand-btn:focus-visible{outline:2px solid var(--docker);outline-offset:2px}
-.live-status{position:absolute;top:16px;left:20px;font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px;z-index:2}
-.live-status .dot{width:8px;height:8px;border-radius:50%;background:var(--muted-2)}
-.live-status.is-connected .dot{background:#22A65A;box-shadow:0 0 0 4px rgba(34,166,90,.15)}
 .panel:fullscreen,.panel.fullscreen-fallback{border-radius:0}
 .panel.fullscreen-fallback{position:fixed;inset:0;z-index:9999;background:radial-gradient(1100px 460px at 50% -8%,rgba(36,150,237,.12),transparent 62%),var(--bg-2)}
 .panel:fullscreen .diagram-wide,.panel.fullscreen-fallback .diagram-wide{max-height:100vh}
@@ -115,7 +112,6 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
   </header>
 
   <section class="panel" id="panel" aria-label="Architecture diagram">
-    <div class="live-status" id="liveStatus" role="status" aria-live="polite"><span class="dot"></span><span id="liveText">connecting…</span></div>
     <button class="expand-btn" id="expandBtn" aria-pressed="false">Expand</button>
 
     <svg class="diagram-wide" viewBox="0 0 1420 760" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="archTitle archDesc">
@@ -435,6 +431,8 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
     </div>
   </section>
 
+  <p style="font-family:var(--mono);font-size:12px;color:var(--muted);margin:14px 2px 0">host <code>:8000</code> → nginx <code>:80</code> → services <code>:3001–3005</code> → postgres <code>:5432</code></p>
+
   <div class="legend" aria-label="Legend">
     <span><span class="swatch sw-pub"></span>public port</span>
     <span><span class="swatch sw-int"></span>internal port</span>
@@ -446,8 +444,6 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
 (function(){
   var panel = document.getElementById('panel');
   var btn = document.getElementById('expandBtn');
-  var status = document.getElementById('liveStatus');
-  var text = document.getElementById('liveText');
   function syncBtn(){
     var full = document.fullscreenElement === panel || panel.classList.contains('fullscreen-fallback');
     btn.textContent = full ? 'Exit' : 'Expand';
@@ -464,15 +460,9 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
   document.addEventListener('keydown', function(e){
     if (e.key === 'Escape' && panel.classList.contains('fullscreen-fallback')) { panel.classList.remove('fullscreen-fallback'); syncBtn(); }
   });
-  function setLive(msg, connected){
-    text.textContent = msg;
-    status.classList.toggle('is-connected', !!connected);
-  }
-  if (!('EventSource' in window)) { setLive('live flow not supported', false); return; }
+  if (!('EventSource' in window)) return;
   var es;
-  try { es = new EventSource('/events'); } catch (err) { setLive('live flow unavailable', false); return; }
-  es.onopen = function(){ setLive('live · waiting for traffic', true); };
-  es.onerror = function(){ setLive('reconnecting…', false); };
+  try { es = new EventSource('/events'); } catch (err) { return; }
   es.onmessage = function(ev){
     var msg;
     try { msg = JSON.parse(ev.data); } catch (err) { return; }
@@ -481,7 +471,6 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
     var nodes = document.querySelectorAll(sel);
     if (!nodes.length) return;
     nodes.forEach(function(n){ n.classList.add('is-active'); });
-    setLive(msg.label || ('flow: ' + msg.flow), true);
     setTimeout(function(){
       nodes.forEach(function(n){ n.classList.remove('is-active'); });
     }, 900);
