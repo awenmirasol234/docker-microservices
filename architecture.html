@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>docker-microservices architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0C1620; --bg-2:#101F2B; --panel:#0F1E2A; --line:#24405A; --line-soft:#1B3145;
+  --ink:#E9F1F7; --muted:#93A9BB; --muted-2:#6F8798;
+  --docker:#2496ED; --public:#F5B301; --internal:#7C93A6;
+  --sans:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,"Cascadia Code","SF Mono",Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans)}
+.wrap{max-width:1360px;margin:0 auto;padding:38px 22px 64px}
+.masthead{max-width:820px;margin:0 0 22px}
+.masthead h1{font-weight:800;font-size:clamp(24px,3vw,38px);letter-spacing:-0.02em;line-height:1.1;margin:0 0 10px}
+.masthead p{color:var(--muted);font-size:clamp(14px,1.35vw,17px);max-width:62ch;margin:0}
+code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);border:1px solid rgba(36,150,237,.25);border-radius:5px;padding:1px 5px}
+.panel{position:relative;border:1px solid var(--line);border-radius:18px;padding:20px;background:radial-gradient(1100px 460px at 50% -8%,rgba(36,150,237,.12),transparent 62%),var(--bg-2);overflow:hidden;animation:rise .55s ease-out both}
+.panel::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(36,150,237,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(36,150,237,.06) 1px,transparent 1px);background-size:46px 46px;pointer-events:none}
+@keyframes rise{from{opacity:0;translate:0 10px}to{opacity:1;translate:0 0}}
+.expand-btn{position:absolute;top:12px;right:12px;border-radius:999px;font-family:var(--mono);font-size:12px;background:rgba(16,31,43,.88);border:1px solid var(--line);color:var(--ink);padding:8px 13px;cursor:pointer;z-index:2}
+.expand-btn:hover{border-color:var(--docker)}
+.expand-btn:focus-visible{outline:2px solid var(--docker);outline-offset:2px}
+.live-status{position:absolute;top:16px;left:20px;font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px;z-index:2}
+.live-status .dot{width:8px;height:8px;border-radius:50%;background:var(--muted-2)}
+.live-status.is-connected .dot{background:#22A65A;box-shadow:0 0 0 4px rgba(34,166,90,.15)}
+.panel:fullscreen,.panel.fullscreen-fallback{border-radius:0}
+.panel.fullscreen-fallback{position:fixed;inset:0;z-index:9999;background:radial-gradient(1100px 460px at 50% -8%,rgba(36,150,237,.12),transparent 62%),var(--bg-2)}
+.panel:fullscreen .diagram-wide,.panel.fullscreen-fallback .diagram-wide{max-height:100vh}
+.diagram-wide{width:100%;height:auto;display:block;position:relative;z-index:1}
+.boundary{fill:rgba(36,150,237,.06);stroke:rgba(36,150,237,.45);stroke-width:1.5;stroke-dasharray:8 7}
+.t-net-title{font-family:var(--sans);font-size:15px;font-weight:700;fill:#9FC9EA}
+.t-net-sub{font-family:var(--mono);font-size:12px;fill:#7FB3D5}
+.t-net-note{font-family:var(--sans);font-size:12px;fill:var(--muted-2)}
+.node{fill:var(--panel);stroke:var(--line);stroke-width:1.4}
+.node-outside{fill:rgba(255,255,255,.025);stroke:var(--muted-2);stroke-width:1.4;stroke-dasharray:6 5}
+.t-title{font-family:var(--sans);font-weight:700;fill:var(--ink);font-size:15px}
+.t-mono{font-family:var(--mono);fill:var(--muted);font-size:12px}
+.t-desc{font-family:var(--sans);fill:var(--muted);font-size:12px}
+.t-center{text-anchor:middle}
+.chip-pub{fill:rgba(245,179,1,.14);stroke:rgba(245,179,1,.55);stroke-width:1}
+.chip-int{fill:rgba(124,147,166,.14);stroke:rgba(124,147,166,.5);stroke-width:1}
+.chip-pub-t{font-family:var(--mono);font-size:11px;fill:#F7C948}
+.chip-int-t{font-family:var(--mono);font-size:11px;fill:#A9BECE}
+.vol{fill:rgba(245,179,1,.07);stroke:rgba(245,179,1,.5);stroke-width:1.3;stroke-dasharray:6 5}
+.vol.is-active{stroke:#F7C948}
+.t-vol-title{font-family:var(--sans);font-weight:700;font-size:14px;fill:var(--public)}
+.flow{fill:none;stroke:var(--docker);stroke-width:2.4;stroke-linecap:round;stroke-dasharray:9 7;opacity:.35}
+.flow.is-active{opacity:.95;animation:dash .7s linear 2}
+@keyframes dash{to{stroke-dashoffset:-32}}
+.flow-pulse{display:none}
+.flow-pulse.is-active{display:block}
+.flow-label{font-family:var(--mono);font-size:11.5px;fill:#CFE2F0;text-anchor:middle}
+.flow-mobile{display:none}
+.legend{display:flex;flex-wrap:wrap;gap:10px 22px;font-family:var(--mono);font-size:12px;color:var(--muted);margin:14px 2px 0}
+.legend .swatch{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:7px;vertical-align:-1px}
+.sw-pub{background:rgba(245,179,1,.35)}
+.sw-int{background:rgba(124,147,166,.4)}
+.sw-flow{display:inline-block;width:26px;border-top:2px dashed var(--docker);margin-right:7px;vertical-align:3px}
+@media (max-width:1024px){
+  .diagram-wide{display:none}
+  .flow-mobile{display:block;padding:10px 8px 6px;position:relative;z-index:1}
+  .wrap{padding:28px 18px 52px}
+}
+.mnode{display:flex;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;position:relative;overflow:hidden}
+.mnode::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent,var(--docker))}
+.mnode-outside{border-style:dashed;border-color:var(--muted-2);background:rgba(255,255,255,.025)}
+.mnode h3{margin:0 0 4px;font-size:15px;letter-spacing:-0.01em}
+.mnode p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.45}
+.mtile{flex:none;width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:16px;color:var(--ink);background:color-mix(in srgb,var(--accent,var(--docker)) 22%,transparent);border:1px solid var(--line)}
+.mports{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.mports span{font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:999px}
+.mports .pub{color:#F7C948;background:rgba(245,179,1,.14);border:1px solid rgba(245,179,1,.55)}
+.mports .int{color:#A9BECE;background:rgba(124,147,166,.14);border:1px solid rgba(124,147,166,.5)}
+.mnetwork{border:1px dashed rgba(36,150,237,.45);background:rgba(36,150,237,.06);border-radius:18px;padding:20px}
+.mnetwork-head{font-family:var(--mono);font-size:11.5px;color:#9FC9EA;margin:0 0 14px}
+.mconnector{height:72px;margin-left:32px;position:relative}
+.mconnector .line{position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--docker);opacity:.25}
+.mconnector.is-active .line{opacity:.95}
+.mconnector .line::before{content:"";position:absolute;top:0;left:-3px;width:8px;height:8px;border-radius:50%;background:var(--docker)}
+.mconnector .line::after{content:"";position:absolute;bottom:-1px;left:-4px;border:5px solid transparent;border-top:7px solid var(--docker)}
+.mconnector--no-arrow .line::after{display:none}
+.mconnector .lbl{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:11.5px;color:#CFE2F0;background:var(--bg-2);border:1px solid var(--line);border-radius:10px;padding:5px 10px;white-space:nowrap}
+.mconnector .flow-dot{position:absolute;left:-3px;top:0;width:8px;height:8px;border-radius:50%;background:var(--docker);opacity:0}
+.mconnector.is-active .flow-dot{opacity:1;animation:mobile-flow 1.2s linear infinite}
+@keyframes mobile-flow{from{top:0;opacity:.45}45%{opacity:1}to{top:calc(100% - 8px);opacity:.45}}
+.mvol{border:1px dashed rgba(245,179,1,.5);background:rgba(245,179,1,.08);border-radius:12px;padding:10px 14px;margin-left:32px}
+.mvol strong{font-family:var(--mono);font-size:12.5px;color:#F7C948;display:block}
+.mvol span{font-size:11.5px;color:var(--muted)}
+.mvol.is-active{box-shadow:0 0 0 2px rgba(245,179,1,.22)}
+@media (prefers-reduced-motion:reduce){
+  .panel{animation:none}
+  .flow.is-active{animation:none}
+  .flow-pulse{display:none !important}
+  .mconnector.is-active .flow-dot{animation:none;opacity:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1>docker-microservices architecture</h1>
+    <p>Five Express CRUD services behind an nginx reverse proxy, one Postgres container with a database per service. Public entry is <code>:8000</code>; everything else resolves on the Compose network.</p>
+  </header>
+
+  <section class="panel" id="panel" aria-label="Architecture diagram">
+    <div class="live-status" id="liveStatus" role="status" aria-live="polite"><span class="dot"></span><span id="liveText">connecting…</span></div>
+    <button class="expand-btn" id="expandBtn" aria-pressed="false">Expand</button>
+
+    <svg class="diagram-wide" viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="archTitle archDesc">
+      <title id="archTitle">docker-microservices request flow</title>
+      <desc id="archDesc">Client calls nginx on port 8000, nginx proxies /api routes to five Node services on ports 3001 to 3005, each service uses its own Postgres database, data persists in the pgdata volume.</desc>
+      <defs>
+        <marker id="arrowW" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2496ED"/></marker>
+        <clipPath id="c-client"><rect x="40" y="305" width="170" height="110" rx="16"/></clipPath>
+        <clipPath id="c-nginx"><rect x="260" y="305" width="220" height="110" rx="16"/></clipPath>
+        <clipPath id="c-u"><rect x="530" y="80" width="250" height="100" rx="16"/></clipPath>
+        <clipPath id="c-p"><rect x="530" y="200" width="250" height="100" rx="16"/></clipPath>
+        <clipPath id="c-o"><rect x="530" y="320" width="250" height="100" rx="16"/></clipPath>
+        <clipPath id="c-i"><rect x="530" y="440" width="250" height="100" rx="16"/></clipPath>
+        <clipPath id="c-r"><rect x="530" y="560" width="250" height="100" rx="16"/></clipPath>
+        <clipPath id="c-pg"><rect x="830" y="305" width="250" height="110" rx="16"/></clipPath>
+      </defs>
+
+      <rect class="boundary" x="20" y="20" width="1160" height="680" rx="20"/>
+      <text class="t-net-title" x="48" y="52">docker-microservices_default</text>
+      <text class="t-net-sub" x="48" y="70">compose network · 7 containers</text>
+      <text class="t-net-note" x="1032" y="52">dashed = internal DNS</text>
+
+      <!-- client (outside) -->
+      <rect class="node-outside" x="40" y="305" width="170" height="110" rx="16"/>
+      <rect x="40" y="305" width="5" height="110" fill="#7C93A6" clip-path="url(#c-client)"/>
+      <text class="t-title" x="60" y="341">You</text>
+      <text class="t-mono" x="60" y="361">curl · browser</text>
+      <rect class="chip-pub" x="60" y="371" width="62" height="22" rx="11"/><text class="chip-pub-t t-center" x="91" y="386">:8000</text>
+
+      <!-- nginx -->
+      <rect class="node" x="260" y="305" width="220" height="110" rx="16"/>
+      <rect x="260" y="305" width="5" height="110" fill="#2496ED" clip-path="url(#c-nginx)"/>
+      <text class="t-title" x="282" y="341">nginx</text>
+      <text class="t-mono" x="282" y="361">reverse proxy</text>
+      <rect class="chip-pub" x="282" y="371" width="62" height="22" rx="11"/><text class="chip-pub-t t-center" x="313" y="386">:8000</text>
+      <rect class="chip-int" x="350" y="371" width="52" height="22" rx="11"/><text class="chip-int-t t-center" x="376" y="386">:80</text>
+
+      <!-- services -->
+      <g>
+        <rect class="node" x="530" y="80" width="250" height="100" rx="16"/>
+        <rect x="530" y="80" width="5" height="100" fill="#34C98E" clip-path="url(#c-u)"/>
+        <text class="t-title" x="552" y="114">user-service</text>
+        <text class="t-mono" x="552" y="134">CRUD /users · users_db</text>
+        <rect class="chip-int" x="552" y="144" width="58" height="22" rx="11"/><text class="chip-int-t t-center" x="581" y="159">:3001</text>
+      </g>
+      <g>
+        <rect class="node" x="530" y="200" width="250" height="100" rx="16"/>
+        <rect x="530" y="200" width="5" height="100" fill="#2496ED" clip-path="url(#c-p)"/>
+        <text class="t-title" x="552" y="234">product-service</text>
+        <text class="t-mono" x="552" y="254">CRUD /products · products_db</text>
+        <rect class="chip-int" x="552" y="264" width="58" height="22" rx="11"/><text class="chip-int-t t-center" x="581" y="279">:3002</text>
+      </g>
+      <g>
+        <rect class="node" x="530" y="320" width="250" height="100" rx="16"/>
+        <rect x="530" y="320" width="5" height="100" fill="#F5820B" clip-path="url(#c-o)"/>
+        <text class="t-title" x="552" y="354">order-service</text>
+        <text class="t-mono" x="552" y="374">CRUD /orders · orders_db</text>
+        <rect class="chip-int" x="552" y="384" width="58" height="22" rx="11"/><text class="chip-int-t t-center" x="581" y="399">:3003</text>
+      </g>
+      <g>
+        <rect class="node" x="530" y="440" width="250" height="100" rx="16"/>
+        <rect x="530" y="440" width="5" height="100" fill="#2DD4BF" clip-path="url(#c-i)"/>
+        <text class="t-title" x="552" y="474">inventory-service</text>
+        <text class="t-mono" x="552" y="494">CRUD /inventory · inventory_db</text>
+        <rect class="chip-int" x="552" y="504" width="58" height="22" rx="11"/><text class="chip-int-t t-center" x="581" y="519">:3004</text>
+      </g>
+      <g>
+        <rect class="node" x="530" y="560" width="250" height="100" rx="16"/>
+        <rect x="530" y="560" width="5" height="100" fill="#B07CFF" clip-path="url(#c-r)"/>
+        <text class="t-title" x="552" y="594">review-service</text>
+        <text class="t-mono" x="552" y="614">CRUD /reviews · reviews_db</text>
+        <rect class="chip-int" x="552" y="624" width="58" height="22" rx="11"/><text class="chip-int-t t-center" x="581" y="639">:3005</text>
+      </g>
+
+      <!-- postgres -->
+      <rect class="node" x="830" y="305" width="250" height="110" rx="16"/>
+      <rect x="830" y="305" width="5" height="110" fill="#7C93A6" clip-path="url(#c-pg)"/>
+      <text class="t-title" x="852" y="341">postgres:17</text>
+      <text class="t-mono" x="852" y="361">5 databases · pgdata</text>
+      <rect class="chip-int" x="852" y="371" width="58" height="22" rx="11"/><text class="chip-int-t t-center" x="881" y="386">:5432</text>
+
+      <!-- volume -->
+      <rect class="vol" data-flow="db-volume" x="830" y="445" width="250" height="80" rx="14"/>
+      <text class="t-vol-title" x="850" y="476">pgdata</text>
+      <text class="t-mono" x="850" y="496">/var/lib/postgresql/data</text>
+
+      <!-- flows: client -> nginx -->
+      <path id="fp-client" class="flow" data-flow="client-nginx" d="M210,360 L260,360" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="client-nginx">
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-client"/></animateMotion></circle>
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-client"/></animateMotion></circle>
+      </g>
+      <text class="flow-label" x="235" y="348">GET /api/* :8000</text>
+
+      <!-- flows: nginx -> services -->
+      <path id="fp-nu" class="flow" data-flow="nginx-users" d="M480,330 L530,130" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="nginx-users">
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-nu"/></animateMotion></circle>
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-nu"/></animateMotion></circle>
+      </g>
+      <text class="flow-label" x="492" y="222">/api/users</text>
+      <path id="fp-np" class="flow" data-flow="nginx-products" d="M480,345 L530,250" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="nginx-products">
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-np"/></animateMotion></circle>
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-np"/></animateMotion></circle>
+      </g>
+      <text class="flow-label" x="490" y="292">/api/products</text>
+      <path id="fp-no" class="flow" data-flow="nginx-orders" d="M480,360 L530,370" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="nginx-orders">
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-no"/></animateMotion></circle>
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-no"/></animateMotion></circle>
+      </g>
+      <text class="flow-label" x="505" y="358">/api/orders</text>
+      <path id="fp-ni" class="flow" data-flow="nginx-inventory" d="M480,375 L530,490" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="nginx-inventory">
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-ni"/></animateMotion></circle>
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-ni"/></animateMotion></circle>
+      </g>
+      <text class="flow-label" x="490" y="442">/api/inventory</text>
+      <path id="fp-nr" class="flow" data-flow="nginx-reviews" d="M480,390 L530,610" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="nginx-reviews">
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-nr"/></animateMotion></circle>
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-nr"/></animateMotion></circle>
+      </g>
+      <text class="flow-label" x="492" y="512">/api/reviews</text>
+
+      <!-- flows: services -> postgres -->
+      <path id="fp-ud" class="flow" data-flow="users-db" d="M780,130 L830,330" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="users-db">
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-ud"/></animateMotion></circle>
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-ud"/></animateMotion></circle>
+      </g>
+      <path id="fp-pd" class="flow" data-flow="products-db" d="M780,250 L830,340" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="products-db">
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-pd"/></animateMotion></circle>
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-pd"/></animateMotion></circle>
+      </g>
+      <path id="fp-od" class="flow" data-flow="orders-db" d="M780,370 L830,360" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="orders-db">
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-od"/></animateMotion></circle>
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-od"/></animateMotion></circle>
+      </g>
+      <text class="flow-label" x="805" y="352">:5432</text>
+      <path id="fp-id" class="flow" data-flow="inventory-db" d="M780,490 L830,380" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="inventory-db">
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-id"/></animateMotion></circle>
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-id"/></animateMotion></circle>
+      </g>
+      <path id="fp-rd" class="flow" data-flow="reviews-db" d="M780,610 L830,390" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="reviews-db">
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-rd"/></animateMotion></circle>
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-rd"/></animateMotion></circle>
+      </g>
+
+      <!-- flow: postgres -> volume -->
+      <path id="fp-dv" class="flow" data-flow="db-volume" d="M955,415 L955,445" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="db-volume">
+        <circle r="4" fill="#F5B301"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-dv"/></animateMotion></circle>
+        <circle r="4" fill="#F5B301"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-dv"/></animateMotion></circle>
+      </g>
+    </svg>
+
+    <div class="flow-mobile" role="img" aria-label="Request flow: client to nginx on port 8000, nginx to five services on ports 3001 to 3005, services to Postgres on 5432, data persisted in the pgdata volume.">
+      <div class="mnetwork">
+        <p class="mnetwork-head">docker-microservices_default · compose network</p>
+        <div class="mnode mnode-outside" style="--accent:#7C93A6"><div class="mtile">Y</div><div><h3>You</h3><p>curl or browser on the host. Only port 8000 is public.</p><div class="mports"><span class="pub">:8000</span></div></div></div>
+        <div class="mconnector" data-flow="client-nginx"><div class="line"></div><div class="flow-dot"></div><span class="lbl">GET /api/* :8000</span></div>
+        <div class="mnode" style="--accent:#2496ED"><div class="mtile">N</div><div><h3>nginx</h3><p>Reverse proxy. Routes each /api path to its service.</p><div class="mports"><span class="pub">:8000</span><span class="int">:80</span></div></div></div>
+        <div class="mconnector" data-flow="nginx-users"><div class="line"></div><div class="flow-dot"></div><span class="lbl">/api/users → :3001</span></div>
+        <div class="mnode" style="--accent:#34C98E"><div class="mtile">U</div><div><h3>user-service</h3><p>CRUD /users backed by users_db.</p><div class="mports"><span class="int">:3001</span></div></div></div>
+        <div class="mconnector" data-flow="nginx-products"><div class="line"></div><div class="flow-dot"></div><span class="lbl">/api/products → :3002</span></div>
+        <div class="mnode" style="--accent:#2496ED"><div class="mtile">P</div><div><h3>product-service</h3><p>CRUD /products backed by products_db.</p><div class="mports"><span class="int">:3002</span></div></div></div>
+        <div class="mconnector" data-flow="nginx-orders"><div class="line"></div><div class="flow-dot"></div><span class="lbl">/api/orders → :3003</span></div>
+        <div class="mnode" style="--accent:#F5820B"><div class="mtile">O</div><div><h3>order-service</h3><p>CRUD /orders backed by orders_db.</p><div class="mports"><span class="int">:3003</span></div></div></div>
+        <div class="mconnector" data-flow="nginx-inventory"><div class="line"></div><div class="flow-dot"></div><span class="lbl">/api/inventory → :3004</span></div>
+        <div class="mnode" style="--accent:#2DD4BF"><div class="mtile">I</div><div><h3>inventory-service</h3><p>CRUD /inventory backed by inventory_db.</p><div class="mports"><span class="int">:3004</span></div></div></div>
+        <div class="mconnector" data-flow="nginx-reviews"><div class="line"></div><div class="flow-dot"></div><span class="lbl">/api/reviews → :3005</span></div>
+        <div class="mnode" style="--accent:#B07CFF"><div class="mtile">R</div><div><h3>review-service</h3><p>CRUD /reviews backed by reviews_db.</p><div class="mports"><span class="int">:3005</span></div></div></div>
+        <div class="mconnector" data-flow="users-db"><div class="line"></div><div class="flow-dot"></div><span class="lbl">users_db · :5432</span></div>
+        <div class="mconnector" data-flow="products-db"><div class="line"></div><div class="flow-dot"></div><span class="lbl">products_db · :5432</span></div>
+        <div class="mconnector" data-flow="orders-db"><div class="line"></div><div class="flow-dot"></div><span class="lbl">orders_db · :5432</span></div>
+        <div class="mconnector" data-flow="inventory-db"><div class="line"></div><div class="flow-dot"></div><span class="lbl">inventory_db · :5432</span></div>
+        <div class="mconnector" data-flow="reviews-db"><div class="line"></div><div class="flow-dot"></div><span class="lbl">reviews_db · :5432</span></div>
+        <div class="mnode" style="--accent:#7C93A6"><div class="mtile">D</div><div><h3>postgres:17</h3><p>One container, one database per service.</p><div class="mports"><span class="int">:5432</span></div></div></div>
+        <div class="mconnector mconnector--no-arrow" data-flow="db-volume"><div class="line"></div><div class="flow-dot"></div><span class="lbl">persisted</span></div>
+        <div class="mvol" data-flow="db-volume"><strong>pgdata</strong><span>/var/lib/postgresql/data</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="legend" aria-label="Legend">
+    <span><span class="swatch sw-pub"></span>public port</span>
+    <span><span class="swatch sw-int"></span>internal port</span>
+    <span><span class="sw-flow"></span>live request flow</span>
+  </div>
+</div>
+
+<script>
+(function(){
+  var panel = document.getElementById('panel');
+  var btn = document.getElementById('expandBtn');
+  var status = document.getElementById('liveStatus');
+  var text = document.getElementById('liveText');
+  function syncBtn(){
+    var full = document.fullscreenElement === panel || panel.classList.contains('fullscreen-fallback');
+    btn.textContent = full ? 'Exit' : 'Expand';
+    btn.setAttribute('aria-pressed', full ? 'true' : 'false');
+  }
+  btn.addEventListener('click', function(){
+    if (document.fullscreenElement === panel) { document.exitFullscreen(); return; }
+    if (panel.classList.contains('fullscreen-fallback')) { panel.classList.remove('fullscreen-fallback'); syncBtn(); return; }
+    if (panel.requestFullscreen) { panel.requestFullscreen().catch(function(){ panel.classList.add('fullscreen-fallback'); syncBtn(); }); }
+    else { panel.classList.add('fullscreen-fallback'); }
+    syncBtn();
+  });
+  document.addEventListener('fullscreenchange', syncBtn);
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && panel.classList.contains('fullscreen-fallback')) { panel.classList.remove('fullscreen-fallback'); syncBtn(); }
+  });
+  function setLive(msg, connected){
+    text.textContent = msg;
+    status.classList.toggle('is-connected', !!connected);
+  }
+  if (!('EventSource' in window)) { setLive('live flow not supported', false); return; }
+  var es;
+  try { es = new EventSource('/events'); } catch (err) { setLive('live flow unavailable', false); return; }
+  es.onopen = function(){ setLive('live · waiting for traffic', true); };
+  es.onerror = function(){ setLive('reconnecting…', false); };
+  es.onmessage = function(ev){
+    var msg;
+    try { msg = JSON.parse(ev.data); } catch (err) { return; }
+    if (!msg || msg.phase !== 'start' || !msg.flow) return;
+    var sel = '[data-flow="' + msg.flow + '"]';
+    var nodes = document.querySelectorAll(sel);
+    if (!nodes.length) return;
+    nodes.forEach(function(n){ n.classList.add('is-active'); });
+    setLive(msg.label || ('flow: ' + msg.flow), true);
+    setTimeout(function(){
+      nodes.forEach(function(n){ n.classList.remove('is-active'); });
+    }, 900);
+  };
+})();
+</script>
+</body>
+</html>
