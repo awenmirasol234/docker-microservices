@@ -9,6 +9,7 @@ Minimal Docker Compose demo: two Express services behind an nginx reverse proxy.
 - `nginx` — reverse proxy, listens `80` (host `8000`)
   - `/api/users` → `user-service:3001/users`
   - `/api/products` → `product-service:3002/products`
+- `postgres` — Postgres 17, one container with two databases: `users_db` (user-service) and `products_db` (product-service), persisted in the `pgdata` volume
 
 ## Prerequisites
 

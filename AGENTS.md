@@ -1,7 +1,7 @@
 # AGENTS.md
 
 ## Stack
-Docker Compose + Node 24 (Express 5) + nginx reverse proxy. No DB, no tests, no lint/typecheck, no CI.
+Docker Compose + Node 24 (Express 5) + nginx reverse proxy + Postgres 17. No tests, no lint/typecheck, no CI.
 
 ## Services
 - `user-service/server.js`: `GET /users`, listens `3001`.
