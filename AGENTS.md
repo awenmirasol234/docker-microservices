@@ -14,11 +14,13 @@ Docker Compose + Node 24 (Express 5) + nginx reverse proxy + Postgres 17. No tes
 ## Commands
 - Build + run all: `docker compose up --build`
 - Run detached: `docker compose up --build -d`
-- Local dev without Docker (per service dir): `npm install && node server.js`
-- Verify: `curl localhost:8000/api/users`, `curl localhost:8000/api/products`
+- After rebuild: `docker compose restart nginx` (it caches upstream IPs; recreated app containers get 502s until restart)
+- Local dev without Docker (per service dir, with `DATABASE_URL` set): `npm install && node server.js`
+- Verify: `curl localhost:8000/api/users`, `curl localhost:8000/api/products`, `curl localhost:8000/api/orders`, `curl localhost:8000/api/inventory`, `curl localhost:8000/api/reviews`
+- New database on existing volume: `docker exec docker-microservices-postgres-1 psql -U postgres -c "CREATE DATABASE <db>;"`
 
 ## Gotchas
 - No `npm start` / test scripts in any `package.json`; use `node server.js`.
 - Inter-service hostnames (`*-service`) only resolve inside Compose network, not from host.
-- `nginx.conf` maps one `location` per service (`/api/<name>` -> backend `/<name>`); adding a new endpoint requires both a new Express route and a new `location` block.
+- `nginx.conf` maps one `location` per service (`/api/<name>` -> backend `/<name>`); adding a service needs a Compose block + `DATABASE_URL` + `location` block + `CREATE DATABASE`.
 - `postgres/init.sql` only runs on first volume init; new databases need manual `createdb` on an existing `pgdata` volume.

@@ -33,6 +33,12 @@ Detached:
 docker compose up --build -d
 ```
 
+After a rebuild, restart nginx so it re-resolves recreated app containers:
+
+```bash
+docker compose restart nginx
+```
+
 ## Verify
 
 ```bash
@@ -42,6 +48,16 @@ curl localhost:8000/api/orders
 curl localhost:8000/api/inventory
 curl localhost:8000/api/reviews
 ```
+
+## API notes
+
+All services: `GET` (list + by id), `POST` (201), `PUT`, `DELETE` (204); `400` on invalid body, `404` on unknown id.
+
+- orders: `user_id`, `product_id`, `quantity` — positive integers
+- inventory: `product_id` — positive integer, unique per product; `stock` — non-negative integer
+- reviews: `product_id`, `user_id` — positive integers; `rating` — integer 1–5; `comment` — optional string
+- users: `name` — required non-empty string
+- products: `name` — required non-empty string; `price` — number
 
 ## Local dev (without Docker)
 
@@ -53,3 +69,11 @@ node server.js
 ```
 
 Note: `DATABASE_URL` must point at that service's database, and inter-service hostnames (`*-service`) only resolve inside the Compose network. From the host, go through `localhost:8000/api/*`.
+
+## Adding a service
+
+1. New dir with `server.js`, `package.json` (`express` + `pg`), `Dockerfile`, `.dockerignore` (copy an existing service)
+2. `CREATE DATABASE <db>;` in `postgres/init.sql`; if the `pgdata` volume already exists, also run `docker exec docker-microservices-postgres-1 psql -U postgres -c "CREATE DATABASE <db>;"`
+3. Compose block with `DATABASE_URL` pointing at the new db + `depends_on` postgres healthy; add to nginx `depends_on`
+4. New `location /api/<name>` block in `nginx/nginx.conf`
+5. Document it here and in `AGENTS.md`
