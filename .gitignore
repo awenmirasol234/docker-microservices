@@ -1,0 +1,10 @@
+user-service/node_modules/
+product-service/node_modules/
+user-service/npm-debug.log
+product-service/npm-debug.log
+user-service/.env
+user-service/.env.*
+product-service/.env
+product-service/.env.*
+.env
+.env.*
