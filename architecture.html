@@ -205,7 +205,6 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-client"/></animateMotion></circle>
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-client"/></animateMotion></circle>
       </g>
-      <text class="flow-label" x="235" y="348">GET /api/* :8000</text>
 
       <!-- flows: nginx -> services -->
       <path id="fp-nu" class="flow" data-flow="nginx-users" d="M480,330 L530,130" marker-end="url(#arrowW)"/>
@@ -213,31 +212,26 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-nu"/></animateMotion></circle>
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-nu"/></animateMotion></circle>
       </g>
-      <text class="flow-label" x="492" y="222">/api/users</text>
       <path id="fp-np" class="flow" data-flow="nginx-products" d="M480,345 L530,250" marker-end="url(#arrowW)"/>
       <g class="flow-pulse" data-flow="nginx-products">
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-np"/></animateMotion></circle>
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-np"/></animateMotion></circle>
       </g>
-      <text class="flow-label" x="490" y="292">/api/products</text>
       <path id="fp-no" class="flow" data-flow="nginx-orders" d="M480,360 L530,370" marker-end="url(#arrowW)"/>
       <g class="flow-pulse" data-flow="nginx-orders">
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-no"/></animateMotion></circle>
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-no"/></animateMotion></circle>
       </g>
-      <text class="flow-label" x="505" y="358">/api/orders</text>
       <path id="fp-ni" class="flow" data-flow="nginx-inventory" d="M480,375 L530,490" marker-end="url(#arrowW)"/>
       <g class="flow-pulse" data-flow="nginx-inventory">
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-ni"/></animateMotion></circle>
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-ni"/></animateMotion></circle>
       </g>
-      <text class="flow-label" x="490" y="442">/api/inventory</text>
       <path id="fp-nr" class="flow" data-flow="nginx-reviews" d="M480,390 L530,610" marker-end="url(#arrowW)"/>
       <g class="flow-pulse" data-flow="nginx-reviews">
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-nr"/></animateMotion></circle>
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-nr"/></animateMotion></circle>
       </g>
-      <text class="flow-label" x="492" y="512">/api/reviews</text>
 
       <!-- flows: services -> postgres -->
       <path id="fp-ud" class="flow" data-flow="users-db" d="M780,130 L830,330" marker-end="url(#arrowW)"/>
@@ -255,7 +249,6 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-od"/></animateMotion></circle>
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-od"/></animateMotion></circle>
       </g>
-      <text class="flow-label" x="805" y="352">:5432</text>
       <path id="fp-id" class="flow" data-flow="inventory-db" d="M780,490 L830,380" marker-end="url(#arrowW)"/>
       <g class="flow-pulse" data-flow="inventory-db">
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-id"/></animateMotion></circle>
@@ -279,25 +272,25 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
       <div class="mnetwork">
         <p class="mnetwork-head">docker-microservices_default · compose network</p>
         <div class="mnode mnode-outside" style="--accent:#7C93A6"><div class="mtile">Y</div><div><h3>You</h3><p>curl or browser on the host. Only port 8000 is public.</p><div class="mports"><span class="pub">:8000</span></div></div></div>
-        <div class="mconnector" data-flow="client-nginx"><div class="line"></div><div class="flow-dot"></div><span class="lbl">GET /api/* :8000</span></div>
+        <div class="mconnector" data-flow="client-nginx"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#2496ED"><div class="mtile">N</div><div><h3>nginx</h3><p>Reverse proxy. Routes each /api path to its service.</p><div class="mports"><span class="pub">:8000</span><span class="int">:80</span></div></div></div>
-        <div class="mconnector" data-flow="nginx-users"><div class="line"></div><div class="flow-dot"></div><span class="lbl">/api/users → :3001</span></div>
+        <div class="mconnector" data-flow="nginx-users"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#34C98E"><div class="mtile">U</div><div><h3>user-service</h3><p>CRUD /users backed by users_db.</p><div class="mports"><span class="int">:3001</span></div></div></div>
-        <div class="mconnector" data-flow="nginx-products"><div class="line"></div><div class="flow-dot"></div><span class="lbl">/api/products → :3002</span></div>
+        <div class="mconnector" data-flow="nginx-products"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#2496ED"><div class="mtile">P</div><div><h3>product-service</h3><p>CRUD /products backed by products_db.</p><div class="mports"><span class="int">:3002</span></div></div></div>
-        <div class="mconnector" data-flow="nginx-orders"><div class="line"></div><div class="flow-dot"></div><span class="lbl">/api/orders → :3003</span></div>
+        <div class="mconnector" data-flow="nginx-orders"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#F5820B"><div class="mtile">O</div><div><h3>order-service</h3><p>CRUD /orders backed by orders_db.</p><div class="mports"><span class="int">:3003</span></div></div></div>
-        <div class="mconnector" data-flow="nginx-inventory"><div class="line"></div><div class="flow-dot"></div><span class="lbl">/api/inventory → :3004</span></div>
+        <div class="mconnector" data-flow="nginx-inventory"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#2DD4BF"><div class="mtile">I</div><div><h3>inventory-service</h3><p>CRUD /inventory backed by inventory_db.</p><div class="mports"><span class="int">:3004</span></div></div></div>
-        <div class="mconnector" data-flow="nginx-reviews"><div class="line"></div><div class="flow-dot"></div><span class="lbl">/api/reviews → :3005</span></div>
+        <div class="mconnector" data-flow="nginx-reviews"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#B07CFF"><div class="mtile">R</div><div><h3>review-service</h3><p>CRUD /reviews backed by reviews_db.</p><div class="mports"><span class="int">:3005</span></div></div></div>
-        <div class="mconnector" data-flow="users-db"><div class="line"></div><div class="flow-dot"></div><span class="lbl">users_db · :5432</span></div>
-        <div class="mconnector" data-flow="products-db"><div class="line"></div><div class="flow-dot"></div><span class="lbl">products_db · :5432</span></div>
-        <div class="mconnector" data-flow="orders-db"><div class="line"></div><div class="flow-dot"></div><span class="lbl">orders_db · :5432</span></div>
-        <div class="mconnector" data-flow="inventory-db"><div class="line"></div><div class="flow-dot"></div><span class="lbl">inventory_db · :5432</span></div>
-        <div class="mconnector" data-flow="reviews-db"><div class="line"></div><div class="flow-dot"></div><span class="lbl">reviews_db · :5432</span></div>
+        <div class="mconnector" data-flow="users-db"><div class="line"></div><div class="flow-dot"></div></div>
+        <div class="mconnector" data-flow="products-db"><div class="line"></div><div class="flow-dot"></div></div>
+        <div class="mconnector" data-flow="orders-db"><div class="line"></div><div class="flow-dot"></div></div>
+        <div class="mconnector" data-flow="inventory-db"><div class="line"></div><div class="flow-dot"></div></div>
+        <div class="mconnector" data-flow="reviews-db"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#7C93A6"><div class="mtile">D</div><div><h3>postgres:17</h3><p>One container, one database per service.</p><div class="mports"><span class="int">:5432</span></div></div></div>
-        <div class="mconnector mconnector--no-arrow" data-flow="db-volume"><div class="line"></div><div class="flow-dot"></div><span class="lbl">persisted</span></div>
+        <div class="mconnector mconnector--no-arrow" data-flow="db-volume"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mvol" data-flow="db-volume"><strong>pgdata</strong><span>/var/lib/postgresql/data</span></div>
       </div>
     </div>
