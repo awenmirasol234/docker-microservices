@@ -29,6 +29,7 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
 .expand-btn{position:absolute;top:12px;right:12px;border-radius:999px;font-family:var(--mono);font-size:12px;background:rgba(16,31,43,.88);border:1px solid var(--line);color:var(--ink);padding:8px 13px;cursor:pointer;z-index:2}
 .expand-btn:hover{border-color:var(--docker)}
 .expand-btn:focus-visible{outline:2px solid var(--docker);outline-offset:2px}
+#demoBtn{right:96px}
 .panel:fullscreen,.panel.fullscreen-fallback{border-radius:0}
 .panel.fullscreen-fallback{position:fixed;inset:0;z-index:9999;background:radial-gradient(1100px 460px at 50% -8%,rgba(36,150,237,.12),transparent 62%),var(--bg-2)}
 .panel:fullscreen .diagram-wide,.panel.fullscreen-fallback .diagram-wide{max-height:100vh}
@@ -113,6 +114,7 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
 
   <section class="panel" id="panel" aria-label="Architecture diagram">
     <button class="expand-btn" id="expandBtn" aria-pressed="false">Expand</button>
+    <button class="expand-btn" id="demoBtn" aria-pressed="true">Pause demo</button>
 
     <svg class="diagram-wide" viewBox="0 0 1420 760" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="archTitle archDesc">
       <title id="archTitle">docker-microservices request flow</title>
@@ -272,31 +274,31 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
 
       <!-- volumes, one per database -->
       <g>
-        <rect class="vol" data-flow="db-volume" x="1070" y="98" width="220" height="64" rx="14"/>
+        <rect class="vol" data-flow="users-volume" x="1070" y="98" width="220" height="64" rx="14"/>
         <use href="#i-disk" x="1258" y="106" width="22" height="22" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
         <text class="t-vol-title" x="1090" y="124" font-size="13">pgdata-users</text>
         <text class="t-mono-sm" x="1090" y="144">/var/lib/postgresql/data</text>
       </g>
       <g>
-        <rect class="vol" data-flow="db-volume" x="1070" y="218" width="220" height="64" rx="14"/>
+        <rect class="vol" data-flow="products-volume" x="1070" y="218" width="220" height="64" rx="14"/>
         <use href="#i-disk" x="1258" y="226" width="22" height="22" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
         <text class="t-vol-title" x="1090" y="244" font-size="13">pgdata-products</text>
         <text class="t-mono-sm" x="1090" y="264">/var/lib/postgresql/data</text>
       </g>
       <g>
-        <rect class="vol" data-flow="db-volume" x="1070" y="338" width="220" height="64" rx="14"/>
+        <rect class="vol" data-flow="orders-volume" x="1070" y="338" width="220" height="64" rx="14"/>
         <use href="#i-disk" x="1258" y="346" width="22" height="22" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
         <text class="t-vol-title" x="1090" y="364" font-size="13">pgdata-orders</text>
         <text class="t-mono-sm" x="1090" y="384">/var/lib/postgresql/data</text>
       </g>
       <g>
-        <rect class="vol" data-flow="db-volume" x="1070" y="458" width="220" height="64" rx="14"/>
+        <rect class="vol" data-flow="inventory-volume" x="1070" y="458" width="220" height="64" rx="14"/>
         <use href="#i-disk" x="1258" y="466" width="22" height="22" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
         <text class="t-vol-title" x="1090" y="484" font-size="13">pgdata-inventory</text>
         <text class="t-mono-sm" x="1090" y="504">/var/lib/postgresql/data</text>
       </g>
       <g>
-        <rect class="vol" data-flow="db-volume" x="1070" y="578" width="220" height="64" rx="14"/>
+        <rect class="vol" data-flow="reviews-volume" x="1070" y="578" width="220" height="64" rx="14"/>
         <use href="#i-disk" x="1258" y="586" width="22" height="22" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
         <text class="t-vol-title" x="1090" y="604" font-size="13">pgdata-reviews</text>
         <text class="t-mono-sm" x="1090" y="624">/var/lib/postgresql/data</text>
@@ -364,28 +366,28 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
       </g>
 
       <!-- flows: databases -> volumes -->
-      <path id="fp-vu" class="flow" data-flow="db-volume" d="M1040,130 L1070,130" marker-end="url(#arrowW)"/>
-      <g class="flow-pulse" data-flow="db-volume">
+      <path id="fp-vu" class="flow" data-flow="users-volume" d="M1040,130 L1070,130" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="users-volume">
         <circle r="4" fill="#F5B301"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-vu"/></animateMotion></circle>
         <circle r="4" fill="#F5B301"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-vu"/></animateMotion></circle>
       </g>
-      <path id="fp-vp" class="flow" data-flow="db-volume" d="M1040,250 L1070,250" marker-end="url(#arrowW)"/>
-      <g class="flow-pulse" data-flow="db-volume">
+      <path id="fp-vp" class="flow" data-flow="products-volume" d="M1040,250 L1070,250" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="products-volume">
         <circle r="4" fill="#F5B301"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-vp"/></animateMotion></circle>
         <circle r="4" fill="#F5B301"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-vp"/></animateMotion></circle>
       </g>
-      <path id="fp-vo" class="flow" data-flow="db-volume" d="M1040,370 L1070,370" marker-end="url(#arrowW)"/>
-      <g class="flow-pulse" data-flow="db-volume">
+      <path id="fp-vo" class="flow" data-flow="orders-volume" d="M1040,370 L1070,370" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="orders-volume">
         <circle r="4" fill="#F5B301"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-vo"/></animateMotion></circle>
         <circle r="4" fill="#F5B301"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-vo"/></animateMotion></circle>
       </g>
-      <path id="fp-vi" class="flow" data-flow="db-volume" d="M1040,490 L1070,490" marker-end="url(#arrowW)"/>
-      <g class="flow-pulse" data-flow="db-volume">
+      <path id="fp-vi" class="flow" data-flow="inventory-volume" d="M1040,490 L1070,490" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="inventory-volume">
         <circle r="4" fill="#F5B301"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-vi"/></animateMotion></circle>
         <circle r="4" fill="#F5B301"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-vi"/></animateMotion></circle>
       </g>
-      <path id="fp-vr" class="flow" data-flow="db-volume" d="M1040,610 L1070,610" marker-end="url(#arrowW)"/>
-      <g class="flow-pulse" data-flow="db-volume">
+      <path id="fp-vr" class="flow" data-flow="reviews-volume" d="M1040,610 L1070,610" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="reviews-volume">
         <circle r="4" fill="#F5B301"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-vr"/></animateMotion></circle>
         <circle r="4" fill="#F5B301"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-vr"/></animateMotion></circle>
       </g>
@@ -401,32 +403,32 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
         <div class="mnode" style="--accent:#34C98E"><div class="mtile"><svg aria-hidden="true"><use href="#i-user"/></svg></div><div><h3>user-service</h3><p>CRUD /users backed by users_db.</p><div class="mports"><span class="int">:3001</span></div></div></div>
         <div class="mconnector" data-flow="users-db"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#7C93A6"><div class="mtile"><svg aria-hidden="true"><use href="#t-pg"/></svg></div><div><h3>postgres-users</h3><p>Dedicated Postgres 17 · users_db.</p><div class="mports"><span class="int">:5432</span></div></div></div>
-        <div class="mconnector mconnector--no-arrow" data-flow="db-volume"><div class="line"></div><div class="flow-dot"></div></div>
-        <div class="mvol" data-flow="db-volume"><strong>pgdata-users</strong><span>/var/lib/postgresql/data</span></div>
+        <div class="mconnector mconnector--no-arrow" data-flow="users-volume"><div class="line"></div><div class="flow-dot"></div></div>
+        <div class="mvol" data-flow="users-volume"><strong>pgdata-users</strong><span>/var/lib/postgresql/data</span></div>
         <div class="mconnector" data-flow="nginx-products"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#2496ED"><div class="mtile"><svg aria-hidden="true"><use href="#i-box"/></svg></div><div><h3>product-service</h3><p>CRUD /products backed by products_db.</p><div class="mports"><span class="int">:3002</span></div></div></div>
         <div class="mconnector" data-flow="products-db"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#7C93A6"><div class="mtile"><svg aria-hidden="true"><use href="#t-pg"/></svg></div><div><h3>postgres-products</h3><p>Dedicated Postgres 17 · products_db.</p><div class="mports"><span class="int">:5432</span></div></div></div>
-        <div class="mconnector mconnector--no-arrow" data-flow="db-volume"><div class="line"></div><div class="flow-dot"></div></div>
-        <div class="mvol" data-flow="db-volume"><strong>pgdata-products</strong><span>/var/lib/postgresql/data</span></div>
+        <div class="mconnector mconnector--no-arrow" data-flow="products-volume"><div class="line"></div><div class="flow-dot"></div></div>
+        <div class="mvol" data-flow="products-volume"><strong>pgdata-products</strong><span>/var/lib/postgresql/data</span></div>
         <div class="mconnector" data-flow="nginx-orders"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#F5820B"><div class="mtile"><svg aria-hidden="true"><use href="#i-cart"/></svg></div><div><h3>order-service</h3><p>CRUD /orders backed by orders_db.</p><div class="mports"><span class="int">:3003</span></div></div></div>
         <div class="mconnector" data-flow="orders-db"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#7C93A6"><div class="mtile"><svg aria-hidden="true"><use href="#t-pg"/></svg></div><div><h3>postgres-orders</h3><p>Dedicated Postgres 17 · orders_db.</p><div class="mports"><span class="int">:5432</span></div></div></div>
-        <div class="mconnector mconnector--no-arrow" data-flow="db-volume"><div class="line"></div><div class="flow-dot"></div></div>
-        <div class="mvol" data-flow="db-volume"><strong>pgdata-orders</strong><span>/var/lib/postgresql/data</span></div>
+        <div class="mconnector mconnector--no-arrow" data-flow="orders-volume"><div class="line"></div><div class="flow-dot"></div></div>
+        <div class="mvol" data-flow="orders-volume"><strong>pgdata-orders</strong><span>/var/lib/postgresql/data</span></div>
         <div class="mconnector" data-flow="nginx-inventory"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#2DD4BF"><div class="mtile"><svg aria-hidden="true"><use href="#i-archive"/></svg></div><div><h3>inventory-service</h3><p>CRUD /inventory backed by inventory_db.</p><div class="mports"><span class="int">:3004</span></div></div></div>
         <div class="mconnector" data-flow="inventory-db"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#7C93A6"><div class="mtile"><svg aria-hidden="true"><use href="#t-pg"/></svg></div><div><h3>postgres-inventory</h3><p>Dedicated Postgres 17 · inventory_db.</p><div class="mports"><span class="int">:5432</span></div></div></div>
-        <div class="mconnector mconnector--no-arrow" data-flow="db-volume"><div class="line"></div><div class="flow-dot"></div></div>
-        <div class="mvol" data-flow="db-volume"><strong>pgdata-inventory</strong><span>/var/lib/postgresql/data</span></div>
+        <div class="mconnector mconnector--no-arrow" data-flow="inventory-volume"><div class="line"></div><div class="flow-dot"></div></div>
+        <div class="mvol" data-flow="inventory-volume"><strong>pgdata-inventory</strong><span>/var/lib/postgresql/data</span></div>
         <div class="mconnector" data-flow="nginx-reviews"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#B07CFF"><div class="mtile"><svg aria-hidden="true"><use href="#i-star"/></svg></div><div><h3>review-service</h3><p>CRUD /reviews backed by reviews_db.</p><div class="mports"><span class="int">:3005</span></div></div></div>
         <div class="mconnector" data-flow="reviews-db"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#7C93A6"><div class="mtile"><svg aria-hidden="true"><use href="#t-pg"/></svg></div><div><h3>postgres-reviews</h3><p>Dedicated Postgres 17 · reviews_db.</p><div class="mports"><span class="int">:5432</span></div></div></div>
-        <div class="mconnector mconnector--no-arrow" data-flow="db-volume"><div class="line"></div><div class="flow-dot"></div></div>
-        <div class="mvol" data-flow="db-volume"><strong>pgdata-reviews</strong><span>/var/lib/postgresql/data</span></div>
+        <div class="mconnector mconnector--no-arrow" data-flow="reviews-volume"><div class="line"></div><div class="flow-dot"></div></div>
+        <div class="mvol" data-flow="reviews-volume"><strong>pgdata-reviews</strong><span>/var/lib/postgresql/data</span></div>
       </div>
     </div>
   </section>
@@ -460,6 +462,59 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
   document.addEventListener('keydown', function(e){
     if (e.key === 'Escape' && panel.classList.contains('fullscreen-fallback')) { panel.classList.remove('fullscreen-fallback'); syncBtn(); }
   });
+  function triggerFlow(flow){
+    var sel = flow === 'db-volume' ? '[data-flow$="-volume"]' : '[data-flow="' + flow + '"]';
+    var nodes = document.querySelectorAll(sel);
+    if (!nodes.length) return;
+    nodes.forEach(function(n){ n.classList.add('is-active'); });
+    setTimeout(function(){
+      nodes.forEach(function(n){ n.classList.remove('is-active'); });
+    }, 900);
+  }
+  var SERVICES = ['users', 'products', 'orders', 'inventory', 'reviews'];
+  var HOP = 500;
+  var LOOP_INTERVAL = 4000;
+  var RESPONSE_GAP = 250;
+  var demoTimer = null;
+  var pending = [];
+  var demoBtn = document.getElementById('demoBtn');
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function later(fn, ms){ pending.push(setTimeout(fn, ms)); }
+  function triggerLoop(svc){
+    var fwd = ['client-nginx', 'nginx-' + svc, svc + '-db', svc + '-volume'];
+    var back = [svc + '-db', 'nginx-' + svc, 'client-nginx'];
+    fwd.forEach(function(f, i){ later(function(){ triggerFlow(f); }, i * HOP); });
+    back.forEach(function(f, i){ later(function(){ triggerFlow(f); }, fwd.length * HOP + RESPONSE_GAP + i * HOP); });
+  }
+  function triggerRandomLoop(){
+    if (document.hidden) return;
+    triggerLoop(SERVICES[Math.floor(Math.random() * SERVICES.length)]);
+  }
+  function syncDemoBtn(){
+    var on = demoTimer !== null;
+    demoBtn.textContent = on ? 'Pause demo' : 'Play demo';
+    demoBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+  }
+  function startDemo(){
+    if (demoTimer !== null || reduceMotion) return;
+    triggerRandomLoop();
+    demoTimer = setInterval(triggerRandomLoop, LOOP_INTERVAL);
+    syncDemoBtn();
+  }
+  function stopDemo(){
+    if (demoTimer !== null) { clearInterval(demoTimer); demoTimer = null; }
+    pending.forEach(clearTimeout);
+    pending = [];
+    syncDemoBtn();
+  }
+  demoBtn.addEventListener('click', function(){
+    if (demoTimer !== null) stopDemo(); else startDemo();
+  });
+  syncDemoBtn();
+  if (!reduceMotion) startDemo();
+  document.addEventListener('visibilitychange', function(){
+    if (document.hidden) { pending.forEach(clearTimeout); pending = []; }
+  });
   if (!('EventSource' in window)) return;
   var es;
   try { es = new EventSource('/events'); } catch (err) { return; }
@@ -467,13 +522,7 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
     var msg;
     try { msg = JSON.parse(ev.data); } catch (err) { return; }
     if (!msg || msg.phase !== 'start' || !msg.flow) return;
-    var sel = '[data-flow="' + msg.flow + '"]';
-    var nodes = document.querySelectorAll(sel);
-    if (!nodes.length) return;
-    nodes.forEach(function(n){ n.classList.add('is-active'); });
-    setTimeout(function(){
-      nodes.forEach(function(n){ n.classList.remove('is-active'); });
-    }, 900);
+    triggerFlow(msg.flow);
   };
 })();
 </script>
