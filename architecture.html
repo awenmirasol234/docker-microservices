@@ -30,7 +30,8 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
 .expand-btn:hover{border-color:var(--docker)}
 .expand-btn:focus-visible{outline:2px solid var(--docker);outline-offset:2px}
 #demoBtn{right:96px}
-.panel:fullscreen,.panel.fullscreen-fallback{border-radius:0}
+.panel:fullscreen,.panel.fullscreen-fallback{border-radius:0;display:flex;flex-direction:column;justify-content:center}
+.panel.fullscreen-fallback{overflow:auto}
 .panel.fullscreen-fallback{position:fixed;inset:0;z-index:9999;background:radial-gradient(1100px 460px at 50% -8%,rgba(36,150,237,.12),transparent 62%),var(--bg-2)}
 .panel:fullscreen .diagram-wide,.panel.fullscreen-fallback .diagram-wide{max-height:100vh}
 .diagram-wide{width:100%;height:auto;display:block;position:relative;z-index:1}
@@ -116,23 +117,23 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
     <button class="expand-btn" id="expandBtn" aria-pressed="false">Expand</button>
     <button class="expand-btn" id="demoBtn" aria-pressed="true">Pause demo</button>
 
-    <svg class="diagram-wide" viewBox="0 0 1560 760" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="archTitle archDesc">
+    <svg class="diagram-wide" viewBox="0 0 1760 760" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="archTitle archDesc">
       <title id="archTitle">docker-microservices request flow</title>
       <desc id="archDesc">External client calls nginx on port 8000, nginx proxies /api routes to five Node services on ports 3001 to 3005, each service has a dedicated Postgres container on port 5432 with its own persistent volume.</desc>
       <defs>
         <marker id="arrowW" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2496ED"/></marker>
         <clipPath id="c-client"><rect x="40" y="305" width="170" height="110" rx="16"/></clipPath>
         <clipPath id="c-nginx"><rect x="260" y="305" width="220" height="110" rx="16"/></clipPath>
-        <clipPath id="c-u"><rect x="530" y="80" width="300" height="100" rx="16"/></clipPath>
-        <clipPath id="c-p"><rect x="530" y="200" width="300" height="100" rx="16"/></clipPath>
-        <clipPath id="c-o"><rect x="530" y="320" width="300" height="100" rx="16"/></clipPath>
-        <clipPath id="c-i"><rect x="530" y="440" width="300" height="100" rx="16"/></clipPath>
-        <clipPath id="c-r"><rect x="530" y="560" width="300" height="100" rx="16"/></clipPath>
-        <clipPath id="c-dbu"><rect x="870" y="98" width="280" height="64" rx="14"/></clipPath>
-        <clipPath id="c-dbp"><rect x="870" y="218" width="280" height="64" rx="14"/></clipPath>
-        <clipPath id="c-dbo"><rect x="870" y="338" width="280" height="64" rx="14"/></clipPath>
-        <clipPath id="c-dbi"><rect x="870" y="458" width="280" height="64" rx="14"/></clipPath>
-        <clipPath id="c-dbr"><rect x="870" y="578" width="280" height="64" rx="14"/></clipPath>
+        <clipPath id="c-u"><rect x="610" y="80" width="300" height="100" rx="16"/></clipPath>
+        <clipPath id="c-p"><rect x="610" y="200" width="300" height="100" rx="16"/></clipPath>
+        <clipPath id="c-o"><rect x="610" y="320" width="300" height="100" rx="16"/></clipPath>
+        <clipPath id="c-i"><rect x="610" y="440" width="300" height="100" rx="16"/></clipPath>
+        <clipPath id="c-r"><rect x="610" y="560" width="300" height="100" rx="16"/></clipPath>
+        <clipPath id="c-dbu"><rect x="1010" y="98" width="280" height="64" rx="14"/></clipPath>
+        <clipPath id="c-dbp"><rect x="1010" y="218" width="280" height="64" rx="14"/></clipPath>
+        <clipPath id="c-dbo"><rect x="1010" y="338" width="280" height="64" rx="14"/></clipPath>
+        <clipPath id="c-dbi"><rect x="1010" y="458" width="280" height="64" rx="14"/></clipPath>
+        <clipPath id="c-dbr"><rect x="1010" y="578" width="280" height="64" rx="14"/></clipPath>
         <symbol id="i-user" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></g></symbol>
         <symbol id="i-box" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></g></symbol>
         <symbol id="i-cart" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></g></symbol>
@@ -159,11 +160,11 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
         </symbol>
       </defs>
 
-      <rect class="boundary" x="250" y="20" width="1290" height="720" rx="20"/>
+      <rect class="boundary" x="250" y="20" width="1490" height="720" rx="20"/>
       <use href="#t-docker" x="272" y="39" width="16" height="16" aria-hidden="true"/>
       <text class="t-net-title" x="296" y="52">docker-microservices_default</text>
       <text class="t-net-sub" x="296" y="70">compose network · 11 containers</text>
-      <text class="t-net-note" x="1172" y="52">dashed = internal DNS</text>
+      <text class="t-net-note" x="1372" y="52">dashed = internal DNS</text>
 
       <!-- client (outside) -->
       <rect class="node-outside" x="40" y="305" width="170" height="110" rx="16"/>
@@ -185,123 +186,123 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
 
       <!-- services -->
       <g>
-        <rect class="node" x="530" y="80" width="300" height="100" rx="16"/>
-        <rect x="530" y="80" width="5" height="100" fill="#34C98E" clip-path="url(#c-u)"/>
-        <use href="#i-user" x="792" y="90" width="26" height="26" style="color:#34C98E;opacity:.9" aria-hidden="true"/>
-        <use href="#t-node" x="774" y="148" width="20" height="23" aria-hidden="true"/>
-        <use href="#t-express" x="798" y="150" width="16" height="16" style="fill:#E9F1F7" aria-hidden="true"/>
-        <text class="t-title" x="552" y="114">user-service</text>
-        <text class="t-mono" x="552" y="134">CRUD /users · users_db</text>
-        <rect class="chip-int" x="552" y="144" width="58" height="22" rx="11"/><text class="chip-int-t t-center" x="581" y="159">:3001</text>
+        <rect class="node" x="610" y="80" width="300" height="100" rx="16"/>
+        <rect x="610" y="80" width="5" height="100" fill="#34C98E" clip-path="url(#c-u)"/>
+        <use href="#i-user" x="872" y="90" width="26" height="26" style="color:#34C98E;opacity:.9" aria-hidden="true"/>
+        <use href="#t-node" x="854" y="148" width="20" height="23" aria-hidden="true"/>
+        <use href="#t-express" x="878" y="150" width="16" height="16" style="fill:#E9F1F7" aria-hidden="true"/>
+        <text class="t-title" x="632" y="114">user-service</text>
+        <text class="t-mono" x="632" y="134">CRUD /users · users_db</text>
+        <rect class="chip-int" x="632" y="144" width="58" height="22" rx="11"/><text class="chip-int-t t-center" x="661" y="159">:3001</text>
       </g>
       <g>
-        <rect class="node" x="530" y="200" width="300" height="100" rx="16"/>
-        <rect x="530" y="200" width="5" height="100" fill="#2496ED" clip-path="url(#c-p)"/>
-        <use href="#i-box" x="792" y="210" width="26" height="26" style="color:#2496ED;opacity:.9" aria-hidden="true"/>
-        <use href="#t-node" x="774" y="268" width="20" height="23" aria-hidden="true"/>
-        <use href="#t-express" x="798" y="270" width="16" height="16" style="fill:#E9F1F7" aria-hidden="true"/>
-        <text class="t-title" x="552" y="234">product-service</text>
-        <text class="t-mono" x="552" y="254">CRUD /products · products_db</text>
-        <rect class="chip-int" x="552" y="264" width="58" height="22" rx="11"/><text class="chip-int-t t-center" x="581" y="279">:3002</text>
+        <rect class="node" x="610" y="200" width="300" height="100" rx="16"/>
+        <rect x="610" y="200" width="5" height="100" fill="#2496ED" clip-path="url(#c-p)"/>
+        <use href="#i-box" x="872" y="210" width="26" height="26" style="color:#2496ED;opacity:.9" aria-hidden="true"/>
+        <use href="#t-node" x="854" y="268" width="20" height="23" aria-hidden="true"/>
+        <use href="#t-express" x="878" y="270" width="16" height="16" style="fill:#E9F1F7" aria-hidden="true"/>
+        <text class="t-title" x="632" y="234">product-service</text>
+        <text class="t-mono" x="632" y="254">CRUD /products · products_db</text>
+        <rect class="chip-int" x="632" y="264" width="58" height="22" rx="11"/><text class="chip-int-t t-center" x="661" y="279">:3002</text>
       </g>
       <g>
-        <rect class="node" x="530" y="320" width="300" height="100" rx="16"/>
-        <rect x="530" y="320" width="5" height="100" fill="#F5820B" clip-path="url(#c-o)"/>
-        <use href="#i-cart" x="792" y="330" width="26" height="26" style="color:#F5820B;opacity:.9" aria-hidden="true"/>
-        <use href="#t-node" x="774" y="388" width="20" height="23" aria-hidden="true"/>
-        <use href="#t-express" x="798" y="390" width="16" height="16" style="fill:#E9F1F7" aria-hidden="true"/>
-        <text class="t-title" x="552" y="354">order-service</text>
-        <text class="t-mono" x="552" y="374">CRUD /orders · orders_db</text>
-        <rect class="chip-int" x="552" y="384" width="58" height="22" rx="11"/><text class="chip-int-t t-center" x="581" y="399">:3003</text>
+        <rect class="node" x="610" y="320" width="300" height="100" rx="16"/>
+        <rect x="610" y="320" width="5" height="100" fill="#F5820B" clip-path="url(#c-o)"/>
+        <use href="#i-cart" x="872" y="330" width="26" height="26" style="color:#F5820B;opacity:.9" aria-hidden="true"/>
+        <use href="#t-node" x="854" y="388" width="20" height="23" aria-hidden="true"/>
+        <use href="#t-express" x="878" y="390" width="16" height="16" style="fill:#E9F1F7" aria-hidden="true"/>
+        <text class="t-title" x="632" y="354">order-service</text>
+        <text class="t-mono" x="632" y="374">CRUD /orders · orders_db</text>
+        <rect class="chip-int" x="632" y="384" width="58" height="22" rx="11"/><text class="chip-int-t t-center" x="661" y="399">:3003</text>
       </g>
       <g>
-        <rect class="node" x="530" y="440" width="300" height="100" rx="16"/>
-        <rect x="530" y="440" width="5" height="100" fill="#2DD4BF" clip-path="url(#c-i)"/>
-        <use href="#i-archive" x="792" y="450" width="26" height="26" style="color:#2DD4BF;opacity:.9" aria-hidden="true"/>
-        <use href="#t-node" x="774" y="508" width="20" height="23" aria-hidden="true"/>
-        <use href="#t-express" x="798" y="510" width="16" height="16" style="fill:#E9F1F7" aria-hidden="true"/>
-        <text class="t-title" x="552" y="474">inventory-service</text>
-        <text class="t-mono" x="552" y="494">CRUD /inventory · inventory_db</text>
-        <rect class="chip-int" x="552" y="504" width="58" height="22" rx="11"/><text class="chip-int-t t-center" x="581" y="519">:3004</text>
+        <rect class="node" x="610" y="440" width="300" height="100" rx="16"/>
+        <rect x="610" y="440" width="5" height="100" fill="#2DD4BF" clip-path="url(#c-i)"/>
+        <use href="#i-archive" x="872" y="450" width="26" height="26" style="color:#2DD4BF;opacity:.9" aria-hidden="true"/>
+        <use href="#t-node" x="854" y="508" width="20" height="23" aria-hidden="true"/>
+        <use href="#t-express" x="878" y="510" width="16" height="16" style="fill:#E9F1F7" aria-hidden="true"/>
+        <text class="t-title" x="632" y="474">inventory-service</text>
+        <text class="t-mono" x="632" y="494">CRUD /inventory · inventory_db</text>
+        <rect class="chip-int" x="632" y="504" width="58" height="22" rx="11"/><text class="chip-int-t t-center" x="661" y="519">:3004</text>
       </g>
       <g>
-        <rect class="node" x="530" y="560" width="300" height="100" rx="16"/>
-        <rect x="530" y="560" width="5" height="100" fill="#B07CFF" clip-path="url(#c-r)"/>
-        <use href="#i-star" x="792" y="570" width="26" height="26" style="color:#B07CFF;opacity:.9" aria-hidden="true"/>
-        <use href="#t-node" x="774" y="628" width="20" height="23" aria-hidden="true"/>
-        <use href="#t-express" x="798" y="630" width="16" height="16" style="fill:#E9F1F7" aria-hidden="true"/>
-        <text class="t-title" x="552" y="594">review-service</text>
-        <text class="t-mono" x="552" y="614">CRUD /reviews · reviews_db</text>
-        <rect class="chip-int" x="552" y="624" width="58" height="22" rx="11"/><text class="chip-int-t t-center" x="581" y="639">:3005</text>
+        <rect class="node" x="610" y="560" width="300" height="100" rx="16"/>
+        <rect x="610" y="560" width="5" height="100" fill="#B07CFF" clip-path="url(#c-r)"/>
+        <use href="#i-star" x="872" y="570" width="26" height="26" style="color:#B07CFF;opacity:.9" aria-hidden="true"/>
+        <use href="#t-node" x="854" y="628" width="20" height="23" aria-hidden="true"/>
+        <use href="#t-express" x="878" y="630" width="16" height="16" style="fill:#E9F1F7" aria-hidden="true"/>
+        <text class="t-title" x="632" y="594">review-service</text>
+        <text class="t-mono" x="632" y="614">CRUD /reviews · reviews_db</text>
+        <rect class="chip-int" x="632" y="624" width="58" height="22" rx="11"/><text class="chip-int-t t-center" x="661" y="639">:3005</text>
       </g>
 
       <!-- dedicated databases -->
       <g>
-        <rect class="node" x="870" y="98" width="280" height="64" rx="14"/>
-        <rect x="870" y="98" width="5" height="64" fill="#7C93A6" clip-path="url(#c-dbu)"/>
-        <use href="#t-pg" x="1078" y="106" width="22" height="22" opacity=".9" aria-hidden="true"/>
-        <text class="t-title-sm" x="900" y="124">postgres-users</text>
-        <text class="t-mono-sm" x="900" y="144">users_db · :5432</text>
+        <rect class="node" x="1010" y="98" width="280" height="64" rx="14"/>
+        <rect x="1010" y="98" width="5" height="64" fill="#7C93A6" clip-path="url(#c-dbu)"/>
+        <use href="#t-pg" x="1218" y="106" width="22" height="22" opacity=".9" aria-hidden="true"/>
+        <text class="t-title-sm" x="1040" y="124">postgres-users</text>
+        <text class="t-mono-sm" x="1040" y="144">users_db · :5432</text>
       </g>
       <g>
-        <rect class="node" x="870" y="218" width="280" height="64" rx="14"/>
-        <rect x="870" y="218" width="5" height="64" fill="#7C93A6" clip-path="url(#c-dbp)"/>
-        <use href="#t-pg" x="1078" y="226" width="22" height="22" opacity=".9" aria-hidden="true"/>
-        <text class="t-title-sm" x="900" y="244">postgres-products</text>
-        <text class="t-mono-sm" x="900" y="264">products_db · :5432</text>
+        <rect class="node" x="1010" y="218" width="280" height="64" rx="14"/>
+        <rect x="1010" y="218" width="5" height="64" fill="#7C93A6" clip-path="url(#c-dbp)"/>
+        <use href="#t-pg" x="1218" y="226" width="22" height="22" opacity=".9" aria-hidden="true"/>
+        <text class="t-title-sm" x="1040" y="244">postgres-products</text>
+        <text class="t-mono-sm" x="1040" y="264">products_db · :5432</text>
       </g>
       <g>
-        <rect class="node" x="870" y="338" width="280" height="64" rx="14"/>
-        <rect x="870" y="338" width="5" height="64" fill="#7C93A6" clip-path="url(#c-dbo)"/>
-        <use href="#t-pg" x="1078" y="346" width="22" height="22" opacity=".9" aria-hidden="true"/>
-        <text class="t-title-sm" x="900" y="364">postgres-orders</text>
-        <text class="t-mono-sm" x="900" y="384">orders_db · :5432</text>
+        <rect class="node" x="1010" y="338" width="280" height="64" rx="14"/>
+        <rect x="1010" y="338" width="5" height="64" fill="#7C93A6" clip-path="url(#c-dbo)"/>
+        <use href="#t-pg" x="1218" y="346" width="22" height="22" opacity=".9" aria-hidden="true"/>
+        <text class="t-title-sm" x="1040" y="364">postgres-orders</text>
+        <text class="t-mono-sm" x="1040" y="384">orders_db · :5432</text>
       </g>
       <g>
-        <rect class="node" x="870" y="458" width="280" height="64" rx="14"/>
-        <rect x="870" y="458" width="5" height="64" fill="#7C93A6" clip-path="url(#c-dbi)"/>
-        <use href="#t-pg" x="1078" y="466" width="22" height="22" opacity=".9" aria-hidden="true"/>
-        <text class="t-title-sm" x="900" y="484">postgres-inventory</text>
-        <text class="t-mono-sm" x="900" y="504">inventory_db · :5432</text>
+        <rect class="node" x="1010" y="458" width="280" height="64" rx="14"/>
+        <rect x="1010" y="458" width="5" height="64" fill="#7C93A6" clip-path="url(#c-dbi)"/>
+        <use href="#t-pg" x="1218" y="466" width="22" height="22" opacity=".9" aria-hidden="true"/>
+        <text class="t-title-sm" x="1040" y="484">postgres-inventory</text>
+        <text class="t-mono-sm" x="1040" y="504">inventory_db · :5432</text>
       </g>
       <g>
-        <rect class="node" x="870" y="578" width="280" height="64" rx="14"/>
-        <rect x="870" y="578" width="5" height="64" fill="#7C93A6" clip-path="url(#c-dbr)"/>
-        <use href="#t-pg" x="1078" y="586" width="22" height="22" opacity=".9" aria-hidden="true"/>
-        <text class="t-title-sm" x="900" y="604">postgres-reviews</text>
-        <text class="t-mono-sm" x="900" y="624">reviews_db · :5432</text>
+        <rect class="node" x="1010" y="578" width="280" height="64" rx="14"/>
+        <rect x="1010" y="578" width="5" height="64" fill="#7C93A6" clip-path="url(#c-dbr)"/>
+        <use href="#t-pg" x="1218" y="586" width="22" height="22" opacity=".9" aria-hidden="true"/>
+        <text class="t-title-sm" x="1040" y="604">postgres-reviews</text>
+        <text class="t-mono-sm" x="1040" y="624">reviews_db · :5432</text>
       </g>
 
       <!-- volumes, one per database -->
       <g>
-        <rect class="vol" data-flow="users-volume" x="1210" y="98" width="260" height="64" rx="14"/>
-        <use href="#i-disk" x="1398" y="106" width="22" height="22" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
-        <text class="t-vol-title" x="1230" y="124" font-size="13">pgdata-users</text>
-        <text class="t-mono-sm" x="1230" y="144">/var/lib/postgresql/data</text>
+        <rect class="vol" data-flow="users-volume" x="1410" y="98" width="260" height="64" rx="14"/>
+        <use href="#i-disk" x="1598" y="106" width="22" height="22" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
+        <text class="t-vol-title" x="1430" y="124" font-size="13">pgdata-users</text>
+        <text class="t-mono-sm" x="1430" y="144">/var/lib/postgresql/data</text>
       </g>
       <g>
-        <rect class="vol" data-flow="products-volume" x="1210" y="218" width="260" height="64" rx="14"/>
-        <use href="#i-disk" x="1398" y="226" width="22" height="22" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
-        <text class="t-vol-title" x="1230" y="244" font-size="13">pgdata-products</text>
-        <text class="t-mono-sm" x="1230" y="264">/var/lib/postgresql/data</text>
+        <rect class="vol" data-flow="products-volume" x="1410" y="218" width="260" height="64" rx="14"/>
+        <use href="#i-disk" x="1598" y="226" width="22" height="22" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
+        <text class="t-vol-title" x="1430" y="244" font-size="13">pgdata-products</text>
+        <text class="t-mono-sm" x="1430" y="264">/var/lib/postgresql/data</text>
       </g>
       <g>
-        <rect class="vol" data-flow="orders-volume" x="1210" y="338" width="260" height="64" rx="14"/>
-        <use href="#i-disk" x="1398" y="346" width="22" height="22" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
-        <text class="t-vol-title" x="1230" y="364" font-size="13">pgdata-orders</text>
-        <text class="t-mono-sm" x="1230" y="384">/var/lib/postgresql/data</text>
+        <rect class="vol" data-flow="orders-volume" x="1410" y="338" width="260" height="64" rx="14"/>
+        <use href="#i-disk" x="1598" y="346" width="22" height="22" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
+        <text class="t-vol-title" x="1430" y="364" font-size="13">pgdata-orders</text>
+        <text class="t-mono-sm" x="1430" y="384">/var/lib/postgresql/data</text>
       </g>
       <g>
-        <rect class="vol" data-flow="inventory-volume" x="1210" y="458" width="260" height="64" rx="14"/>
-        <use href="#i-disk" x="1398" y="466" width="22" height="22" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
-        <text class="t-vol-title" x="1230" y="484" font-size="13">pgdata-inventory</text>
-        <text class="t-mono-sm" x="1230" y="504">/var/lib/postgresql/data</text>
+        <rect class="vol" data-flow="inventory-volume" x="1410" y="458" width="260" height="64" rx="14"/>
+        <use href="#i-disk" x="1598" y="466" width="22" height="22" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
+        <text class="t-vol-title" x="1430" y="484" font-size="13">pgdata-inventory</text>
+        <text class="t-mono-sm" x="1430" y="504">/var/lib/postgresql/data</text>
       </g>
       <g>
-        <rect class="vol" data-flow="reviews-volume" x="1210" y="578" width="260" height="64" rx="14"/>
-        <use href="#i-disk" x="1398" y="586" width="22" height="22" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
-        <text class="t-vol-title" x="1230" y="604" font-size="13">pgdata-reviews</text>
-        <text class="t-mono-sm" x="1230" y="624">/var/lib/postgresql/data</text>
+        <rect class="vol" data-flow="reviews-volume" x="1410" y="578" width="260" height="64" rx="14"/>
+        <use href="#i-disk" x="1598" y="586" width="22" height="22" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
+        <text class="t-vol-title" x="1430" y="604" font-size="13">pgdata-reviews</text>
+        <text class="t-mono-sm" x="1430" y="624">/var/lib/postgresql/data</text>
       </g>
 
       <!-- flows: client -> nginx -->
@@ -312,81 +313,81 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
       </g>
 
       <!-- flows: nginx -> services -->
-      <path id="fp-nu" class="flow" data-flow="nginx-users" d="M480,330 L530,130" marker-end="url(#arrowW)"/>
+      <path id="fp-nu" class="flow" data-flow="nginx-users" d="M480,330 L610,130" marker-end="url(#arrowW)"/>
       <g class="flow-pulse" data-flow="nginx-users">
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-nu"/></animateMotion></circle>
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-nu"/></animateMotion></circle>
       </g>
-      <path id="fp-np" class="flow" data-flow="nginx-products" d="M480,345 L530,250" marker-end="url(#arrowW)"/>
+      <path id="fp-np" class="flow" data-flow="nginx-products" d="M480,345 L610,250" marker-end="url(#arrowW)"/>
       <g class="flow-pulse" data-flow="nginx-products">
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-np"/></animateMotion></circle>
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-np"/></animateMotion></circle>
       </g>
-      <path id="fp-no" class="flow" data-flow="nginx-orders" d="M480,360 L530,370" marker-end="url(#arrowW)"/>
+      <path id="fp-no" class="flow" data-flow="nginx-orders" d="M480,360 L610,370" marker-end="url(#arrowW)"/>
       <g class="flow-pulse" data-flow="nginx-orders">
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-no"/></animateMotion></circle>
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-no"/></animateMotion></circle>
       </g>
-      <path id="fp-ni" class="flow" data-flow="nginx-inventory" d="M480,375 L530,490" marker-end="url(#arrowW)"/>
+      <path id="fp-ni" class="flow" data-flow="nginx-inventory" d="M480,375 L610,490" marker-end="url(#arrowW)"/>
       <g class="flow-pulse" data-flow="nginx-inventory">
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-ni"/></animateMotion></circle>
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-ni"/></animateMotion></circle>
       </g>
-      <path id="fp-nr" class="flow" data-flow="nginx-reviews" d="M480,390 L530,610" marker-end="url(#arrowW)"/>
+      <path id="fp-nr" class="flow" data-flow="nginx-reviews" d="M480,390 L610,610" marker-end="url(#arrowW)"/>
       <g class="flow-pulse" data-flow="nginx-reviews">
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-nr"/></animateMotion></circle>
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-nr"/></animateMotion></circle>
       </g>
 
       <!-- flows: services -> dedicated databases -->
-      <path id="fp-ud" class="flow" data-flow="users-db" d="M830,130 L870,130" marker-end="url(#arrowW)"/>
+      <path id="fp-ud" class="flow" data-flow="users-db" d="M910,130 L1010,130" marker-end="url(#arrowW)"/>
       <g class="flow-pulse" data-flow="users-db">
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-ud"/></animateMotion></circle>
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-ud"/></animateMotion></circle>
       </g>
-      <path id="fp-pd" class="flow" data-flow="products-db" d="M830,250 L870,250" marker-end="url(#arrowW)"/>
+      <path id="fp-pd" class="flow" data-flow="products-db" d="M910,250 L1010,250" marker-end="url(#arrowW)"/>
       <g class="flow-pulse" data-flow="products-db">
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-pd"/></animateMotion></circle>
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-pd"/></animateMotion></circle>
       </g>
-      <path id="fp-od" class="flow" data-flow="orders-db" d="M830,370 L870,370" marker-end="url(#arrowW)"/>
+      <path id="fp-od" class="flow" data-flow="orders-db" d="M910,370 L1010,370" marker-end="url(#arrowW)"/>
       <g class="flow-pulse" data-flow="orders-db">
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-od"/></animateMotion></circle>
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-od"/></animateMotion></circle>
       </g>
-      <path id="fp-id" class="flow" data-flow="inventory-db" d="M830,490 L870,490" marker-end="url(#arrowW)"/>
+      <path id="fp-id" class="flow" data-flow="inventory-db" d="M910,490 L1010,490" marker-end="url(#arrowW)"/>
       <g class="flow-pulse" data-flow="inventory-db">
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-id"/></animateMotion></circle>
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-id"/></animateMotion></circle>
       </g>
-      <path id="fp-rd" class="flow" data-flow="reviews-db" d="M830,610 L870,610" marker-end="url(#arrowW)"/>
+      <path id="fp-rd" class="flow" data-flow="reviews-db" d="M910,610 L1010,610" marker-end="url(#arrowW)"/>
       <g class="flow-pulse" data-flow="reviews-db">
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-rd"/></animateMotion></circle>
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-rd"/></animateMotion></circle>
       </g>
 
       <!-- flows: databases -> volumes -->
-      <path id="fp-vu" class="flow" data-flow="users-volume" d="M1150,130 L1210,130" marker-end="url(#arrowW)"/>
+      <path id="fp-vu" class="flow" data-flow="users-volume" d="M1290,130 L1410,130" marker-end="url(#arrowW)"/>
       <g class="flow-pulse" data-flow="users-volume">
         <circle r="4" fill="#F5B301"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-vu"/></animateMotion></circle>
         <circle r="4" fill="#F5B301"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-vu"/></animateMotion></circle>
       </g>
-      <path id="fp-vp" class="flow" data-flow="products-volume" d="M1150,250 L1210,250" marker-end="url(#arrowW)"/>
+      <path id="fp-vp" class="flow" data-flow="products-volume" d="M1290,250 L1410,250" marker-end="url(#arrowW)"/>
       <g class="flow-pulse" data-flow="products-volume">
         <circle r="4" fill="#F5B301"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-vp"/></animateMotion></circle>
         <circle r="4" fill="#F5B301"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-vp"/></animateMotion></circle>
       </g>
-      <path id="fp-vo" class="flow" data-flow="orders-volume" d="M1150,370 L1210,370" marker-end="url(#arrowW)"/>
+      <path id="fp-vo" class="flow" data-flow="orders-volume" d="M1290,370 L1410,370" marker-end="url(#arrowW)"/>
       <g class="flow-pulse" data-flow="orders-volume">
         <circle r="4" fill="#F5B301"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-vo"/></animateMotion></circle>
         <circle r="4" fill="#F5B301"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-vo"/></animateMotion></circle>
       </g>
-      <path id="fp-vi" class="flow" data-flow="inventory-volume" d="M1150,490 L1210,490" marker-end="url(#arrowW)"/>
+      <path id="fp-vi" class="flow" data-flow="inventory-volume" d="M1290,490 L1410,490" marker-end="url(#arrowW)"/>
       <g class="flow-pulse" data-flow="inventory-volume">
         <circle r="4" fill="#F5B301"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-vi"/></animateMotion></circle>
         <circle r="4" fill="#F5B301"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-vi"/></animateMotion></circle>
       </g>
-      <path id="fp-vr" class="flow" data-flow="reviews-volume" d="M1150,610 L1210,610" marker-end="url(#arrowW)"/>
+      <path id="fp-vr" class="flow" data-flow="reviews-volume" d="M1290,610 L1410,610" marker-end="url(#arrowW)"/>
       <g class="flow-pulse" data-flow="reviews-volume">
         <circle r="4" fill="#F5B301"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-vr"/></animateMotion></circle>
         <circle r="4" fill="#F5B301"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-vr"/></animateMotion></circle>
