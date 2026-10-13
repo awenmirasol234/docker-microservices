@@ -29,6 +29,30 @@ services:
       postgres:
         condition: service_healthy
 
+  order-service:
+    build: ./order-service
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/orders_db
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  inventory-service:
+    build: ./inventory-service
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/inventory_db
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  review-service:
+    build: ./review-service
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/reviews_db
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   nginx:
     build: ./nginx
     ports:
@@ -36,6 +60,9 @@ services:
     depends_on:
       - user-service
       - product-service
+      - order-service
+      - inventory-service
+      - review-service
 
 volumes:
   pgdata:
