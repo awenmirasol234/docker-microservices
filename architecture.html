@@ -94,6 +94,9 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
 .mconnector .flow-dot{position:absolute;left:-3px;top:0;width:8px;height:8px;border-radius:50%;background:var(--docker);opacity:0}
 .mconnector.is-active .flow-dot{opacity:1;animation:mobile-flow 1.2s linear infinite}
 @keyframes mobile-flow{from{top:0;opacity:.45}45%{opacity:1}to{top:calc(100% - 8px);opacity:.45}}
+.mconnector.is-reverse .line::after{bottom:auto;top:-1px;border:5px solid transparent;border-bottom:7px solid var(--docker)}
+.mconnector.is-reverse.is-active .flow-dot{animation-name:mobile-flow-rev}
+@keyframes mobile-flow-rev{from{top:calc(100% - 8px);opacity:.45}45%{opacity:1}to{top:0;opacity:.45}}
 .mvol{border:1px dashed rgba(245,179,1,.5);background:rgba(245,179,1,.08);border-radius:12px;padding:10px 14px;margin-left:32px}
 .mvol strong{font-family:var(--mono);font-size:12.5px;color:#F7C948;display:block}
 .mvol span{font-size:11.5px;color:var(--muted)}
@@ -103,6 +106,7 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
   .flow.is-active{animation:none}
   .flow-pulse{display:none !important}
   .mconnector.is-active .flow-dot{animation:none;opacity:0}
+  .node,.node-outside,.vol{filter:none}
 }
 </style>
 </head>
@@ -122,6 +126,9 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
       <desc id="archDesc">External client calls nginx on port 8000, nginx proxies /api routes to five Node services on ports 3001 to 3005, each service has a dedicated Postgres container on port 5432 with its own persistent volume.</desc>
       <defs>
         <marker id="arrowW" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2496ED"/></marker>
+        <filter id="depth" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="7" stdDeviation="7" flood-color="#000000" flood-opacity="0.45"/>
+        </filter>
         <clipPath id="c-client"><rect x="40" y="305" width="170" height="110" rx="16"/></clipPath>
         <clipPath id="c-nginx"><rect x="260" y="305" width="220" height="110" rx="16"/></clipPath>
         <clipPath id="c-u"><rect x="610" y="80" width="300" height="100" rx="16"/></clipPath>
@@ -167,7 +174,7 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
       <text class="t-net-note" x="1372" y="52">dashed = internal DNS</text>
 
       <!-- client (outside) -->
-      <rect class="node-outside" x="40" y="305" width="170" height="110" rx="16"/>
+      <rect class="node-outside" filter="url(#depth)" x="40" y="305" width="170" height="110" rx="16"/>
       <rect x="40" y="305" width="5" height="110" fill="#7C93A6" clip-path="url(#c-client)"/>
       <use href="#i-globe" x="132" y="315" width="26" height="26" style="color:#7C93A6;opacity:.9" aria-hidden="true"/>
       <text class="t-title" x="60" y="341">You</text>
@@ -176,7 +183,7 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
       <text class="t-net-note" x="40" y="440">host network · outside</text>
 
       <!-- nginx -->
-      <rect class="node" x="260" y="305" width="220" height="110" rx="16"/>
+      <rect class="node" filter="url(#depth)" x="260" y="305" width="220" height="110" rx="16"/>
       <rect x="260" y="305" width="5" height="110" fill="#2496ED" clip-path="url(#c-nginx)"/>
       <use href="#t-nginx" x="442" y="315" width="26" height="26" opacity=".9" aria-hidden="true"/>
       <text class="t-title" x="282" y="341">nginx</text>
@@ -186,7 +193,7 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
 
       <!-- services -->
       <g>
-        <rect class="node" x="610" y="80" width="300" height="100" rx="16"/>
+        <rect class="node" filter="url(#depth)" x="610" y="80" width="300" height="100" rx="16"/>
         <rect x="610" y="80" width="5" height="100" fill="#34C98E" clip-path="url(#c-u)"/>
         <use href="#i-user" x="872" y="90" width="26" height="26" style="color:#34C98E;opacity:.9" aria-hidden="true"/>
         <use href="#t-node" x="854" y="148" width="20" height="23" aria-hidden="true"/>
@@ -196,7 +203,7 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
         <rect class="chip-int" x="632" y="144" width="58" height="22" rx="11"/><text class="chip-int-t t-center" x="661" y="159">:3001</text>
       </g>
       <g>
-        <rect class="node" x="610" y="200" width="300" height="100" rx="16"/>
+        <rect class="node" filter="url(#depth)" x="610" y="200" width="300" height="100" rx="16"/>
         <rect x="610" y="200" width="5" height="100" fill="#2496ED" clip-path="url(#c-p)"/>
         <use href="#i-box" x="872" y="210" width="26" height="26" style="color:#2496ED;opacity:.9" aria-hidden="true"/>
         <use href="#t-node" x="854" y="268" width="20" height="23" aria-hidden="true"/>
@@ -206,7 +213,7 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
         <rect class="chip-int" x="632" y="264" width="58" height="22" rx="11"/><text class="chip-int-t t-center" x="661" y="279">:3002</text>
       </g>
       <g>
-        <rect class="node" x="610" y="320" width="300" height="100" rx="16"/>
+        <rect class="node" filter="url(#depth)" x="610" y="320" width="300" height="100" rx="16"/>
         <rect x="610" y="320" width="5" height="100" fill="#F5820B" clip-path="url(#c-o)"/>
         <use href="#i-cart" x="872" y="330" width="26" height="26" style="color:#F5820B;opacity:.9" aria-hidden="true"/>
         <use href="#t-node" x="854" y="388" width="20" height="23" aria-hidden="true"/>
@@ -216,7 +223,7 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
         <rect class="chip-int" x="632" y="384" width="58" height="22" rx="11"/><text class="chip-int-t t-center" x="661" y="399">:3003</text>
       </g>
       <g>
-        <rect class="node" x="610" y="440" width="300" height="100" rx="16"/>
+        <rect class="node" filter="url(#depth)" x="610" y="440" width="300" height="100" rx="16"/>
         <rect x="610" y="440" width="5" height="100" fill="#2DD4BF" clip-path="url(#c-i)"/>
         <use href="#i-archive" x="872" y="450" width="26" height="26" style="color:#2DD4BF;opacity:.9" aria-hidden="true"/>
         <use href="#t-node" x="854" y="508" width="20" height="23" aria-hidden="true"/>
@@ -226,7 +233,7 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
         <rect class="chip-int" x="632" y="504" width="58" height="22" rx="11"/><text class="chip-int-t t-center" x="661" y="519">:3004</text>
       </g>
       <g>
-        <rect class="node" x="610" y="560" width="300" height="100" rx="16"/>
+        <rect class="node" filter="url(#depth)" x="610" y="560" width="300" height="100" rx="16"/>
         <rect x="610" y="560" width="5" height="100" fill="#B07CFF" clip-path="url(#c-r)"/>
         <use href="#i-star" x="872" y="570" width="26" height="26" style="color:#B07CFF;opacity:.9" aria-hidden="true"/>
         <use href="#t-node" x="854" y="628" width="20" height="23" aria-hidden="true"/>
@@ -238,35 +245,35 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
 
       <!-- dedicated databases -->
       <g>
-        <rect class="node" x="1010" y="98" width="280" height="64" rx="14"/>
+        <rect class="node" filter="url(#depth)" x="1010" y="98" width="280" height="64" rx="14"/>
         <rect x="1010" y="98" width="5" height="64" fill="#7C93A6" clip-path="url(#c-dbu)"/>
         <use href="#t-pg" x="1218" y="106" width="22" height="22" opacity=".9" aria-hidden="true"/>
         <text class="t-title-sm" x="1040" y="124">postgres-users</text>
         <text class="t-mono-sm" x="1040" y="144">users_db · :5432</text>
       </g>
       <g>
-        <rect class="node" x="1010" y="218" width="280" height="64" rx="14"/>
+        <rect class="node" filter="url(#depth)" x="1010" y="218" width="280" height="64" rx="14"/>
         <rect x="1010" y="218" width="5" height="64" fill="#7C93A6" clip-path="url(#c-dbp)"/>
         <use href="#t-pg" x="1218" y="226" width="22" height="22" opacity=".9" aria-hidden="true"/>
         <text class="t-title-sm" x="1040" y="244">postgres-products</text>
         <text class="t-mono-sm" x="1040" y="264">products_db · :5432</text>
       </g>
       <g>
-        <rect class="node" x="1010" y="338" width="280" height="64" rx="14"/>
+        <rect class="node" filter="url(#depth)" x="1010" y="338" width="280" height="64" rx="14"/>
         <rect x="1010" y="338" width="5" height="64" fill="#7C93A6" clip-path="url(#c-dbo)"/>
         <use href="#t-pg" x="1218" y="346" width="22" height="22" opacity=".9" aria-hidden="true"/>
         <text class="t-title-sm" x="1040" y="364">postgres-orders</text>
         <text class="t-mono-sm" x="1040" y="384">orders_db · :5432</text>
       </g>
       <g>
-        <rect class="node" x="1010" y="458" width="280" height="64" rx="14"/>
+        <rect class="node" filter="url(#depth)" x="1010" y="458" width="280" height="64" rx="14"/>
         <rect x="1010" y="458" width="5" height="64" fill="#7C93A6" clip-path="url(#c-dbi)"/>
         <use href="#t-pg" x="1218" y="466" width="22" height="22" opacity=".9" aria-hidden="true"/>
         <text class="t-title-sm" x="1040" y="484">postgres-inventory</text>
         <text class="t-mono-sm" x="1040" y="504">inventory_db · :5432</text>
       </g>
       <g>
-        <rect class="node" x="1010" y="578" width="280" height="64" rx="14"/>
+        <rect class="node" filter="url(#depth)" x="1010" y="578" width="280" height="64" rx="14"/>
         <rect x="1010" y="578" width="5" height="64" fill="#7C93A6" clip-path="url(#c-dbr)"/>
         <use href="#t-pg" x="1218" y="586" width="22" height="22" opacity=".9" aria-hidden="true"/>
         <text class="t-title-sm" x="1040" y="604">postgres-reviews</text>
@@ -275,31 +282,31 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
 
       <!-- volumes, one per database -->
       <g>
-        <rect class="vol" data-flow="users-volume" x="1410" y="98" width="260" height="64" rx="14"/>
+        <rect class="vol" filter="url(#depth)" data-flow="users-volume" x="1410" y="98" width="260" height="64" rx="14"/>
         <use href="#i-disk" x="1598" y="106" width="22" height="22" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
         <text class="t-vol-title" x="1430" y="124" font-size="13">pgdata-users</text>
         <text class="t-mono-sm" x="1430" y="144">/var/lib/postgresql/data</text>
       </g>
       <g>
-        <rect class="vol" data-flow="products-volume" x="1410" y="218" width="260" height="64" rx="14"/>
+        <rect class="vol" filter="url(#depth)" data-flow="products-volume" x="1410" y="218" width="260" height="64" rx="14"/>
         <use href="#i-disk" x="1598" y="226" width="22" height="22" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
         <text class="t-vol-title" x="1430" y="244" font-size="13">pgdata-products</text>
         <text class="t-mono-sm" x="1430" y="264">/var/lib/postgresql/data</text>
       </g>
       <g>
-        <rect class="vol" data-flow="orders-volume" x="1410" y="338" width="260" height="64" rx="14"/>
+        <rect class="vol" filter="url(#depth)" data-flow="orders-volume" x="1410" y="338" width="260" height="64" rx="14"/>
         <use href="#i-disk" x="1598" y="346" width="22" height="22" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
         <text class="t-vol-title" x="1430" y="364" font-size="13">pgdata-orders</text>
         <text class="t-mono-sm" x="1430" y="384">/var/lib/postgresql/data</text>
       </g>
       <g>
-        <rect class="vol" data-flow="inventory-volume" x="1410" y="458" width="260" height="64" rx="14"/>
+        <rect class="vol" filter="url(#depth)" data-flow="inventory-volume" x="1410" y="458" width="260" height="64" rx="14"/>
         <use href="#i-disk" x="1598" y="466" width="22" height="22" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
         <text class="t-vol-title" x="1430" y="484" font-size="13">pgdata-inventory</text>
         <text class="t-mono-sm" x="1430" y="504">/var/lib/postgresql/data</text>
       </g>
       <g>
-        <rect class="vol" data-flow="reviews-volume" x="1410" y="578" width="260" height="64" rx="14"/>
+        <rect class="vol" filter="url(#depth)" data-flow="reviews-volume" x="1410" y="578" width="260" height="64" rx="14"/>
         <use href="#i-disk" x="1598" y="586" width="22" height="22" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
         <text class="t-vol-title" x="1430" y="604" font-size="13">pgdata-reviews</text>
         <text class="t-mono-sm" x="1430" y="624">/var/lib/postgresql/data</text>
@@ -310,6 +317,13 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
       <g class="flow-pulse" data-flow="client-nginx">
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-client"/></animateMotion></circle>
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-client"/></animateMotion></circle>
+      </g>
+
+      <!-- return: nginx -> client (mirrored) -->
+      <path id="bp-client" class="flow" data-flow="client-nginx-back" d="M260,360 L210,360" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="client-nginx-back">
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#bp-client"/></animateMotion></circle>
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#bp-client"/></animateMotion></circle>
       </g>
 
       <!-- flows: nginx -> services -->
@@ -339,6 +353,33 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-nr"/></animateMotion></circle>
       </g>
 
+      <!-- return: services -> nginx (mirrored) -->
+      <path id="bp-nu" class="flow" data-flow="nginx-users-back" d="M610,130 L480,330" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="nginx-users-back">
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#bp-nu"/></animateMotion></circle>
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#bp-nu"/></animateMotion></circle>
+      </g>
+      <path id="bp-np" class="flow" data-flow="nginx-products-back" d="M610,250 L480,345" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="nginx-products-back">
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#bp-np"/></animateMotion></circle>
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#bp-np"/></animateMotion></circle>
+      </g>
+      <path id="bp-no" class="flow" data-flow="nginx-orders-back" d="M610,370 L480,360" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="nginx-orders-back">
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#bp-no"/></animateMotion></circle>
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#bp-no"/></animateMotion></circle>
+      </g>
+      <path id="bp-ni" class="flow" data-flow="nginx-inventory-back" d="M610,490 L480,375" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="nginx-inventory-back">
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#bp-ni"/></animateMotion></circle>
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#bp-ni"/></animateMotion></circle>
+      </g>
+      <path id="bp-nr" class="flow" data-flow="nginx-reviews-back" d="M610,610 L480,390" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="nginx-reviews-back">
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#bp-nr"/></animateMotion></circle>
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#bp-nr"/></animateMotion></circle>
+      </g>
+
       <!-- flows: services -> dedicated databases -->
       <path id="fp-ud" class="flow" data-flow="users-db" d="M910,130 L1010,130" marker-end="url(#arrowW)"/>
       <g class="flow-pulse" data-flow="users-db">
@@ -364,6 +405,33 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
       <g class="flow-pulse" data-flow="reviews-db">
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#fp-rd"/></animateMotion></circle>
         <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#fp-rd"/></animateMotion></circle>
+      </g>
+
+      <!-- return: databases -> services (mirrored) -->
+      <path id="bp-ud" class="flow" data-flow="users-db-back" d="M1010,130 L910,130" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="users-db-back">
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#bp-ud"/></animateMotion></circle>
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#bp-ud"/></animateMotion></circle>
+      </g>
+      <path id="bp-pd" class="flow" data-flow="products-db-back" d="M1010,250 L910,250" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="products-db-back">
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#bp-pd"/></animateMotion></circle>
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#bp-pd"/></animateMotion></circle>
+      </g>
+      <path id="bp-od" class="flow" data-flow="orders-db-back" d="M1010,370 L910,370" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="orders-db-back">
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#bp-od"/></animateMotion></circle>
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#bp-od"/></animateMotion></circle>
+      </g>
+      <path id="bp-id" class="flow" data-flow="inventory-db-back" d="M1010,490 L910,490" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="inventory-db-back">
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#bp-id"/></animateMotion></circle>
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#bp-id"/></animateMotion></circle>
+      </g>
+      <path id="bp-rd" class="flow" data-flow="reviews-db-back" d="M1010,610 L910,610" marker-end="url(#arrowW)"/>
+      <g class="flow-pulse" data-flow="reviews-db-back">
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#bp-rd"/></animateMotion></circle>
+        <circle r="4" fill="#2496ED"><animateMotion dur="1.2s" begin="-0.6s" repeatCount="indefinite"><mpath href="#bp-rd"/></animateMotion></circle>
       </g>
 
       <!-- flows: databases -> volumes -->
@@ -396,37 +464,37 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
 
     <div class="flow-mobile" role="img" aria-label="Request flow: external client to nginx on port 8000, nginx to five services on ports 3001 to 3005, each service with a dedicated Postgres container on port 5432 and its own persistent volume.">
       <div class="mnode mnode-outside" style="--accent:#7C93A6"><div class="mtile"><svg aria-hidden="true"><use href="#i-globe"/></svg></div><div><h3>You</h3><p>curl or browser on the host. Only port 8000 is public.</p><div class="mports"><span class="pub">:8000</span></div></div></div>
-      <div class="mconnector" data-flow="client-nginx"><div class="line"></div><div class="flow-dot"></div></div>
+      <div class="mconnector" data-flow="client-nginx" data-flow-back="client-nginx-back"><div class="line"></div><div class="flow-dot"></div></div>
       <div class="mnetwork">
         <p class="mnetwork-head">docker-microservices_default · compose network</p>
         <div class="mnode" style="--accent:#2496ED"><div class="mtile"><svg aria-hidden="true"><use href="#t-nginx"/></svg></div><div><h3>nginx</h3><p>Reverse proxy. Routes each /api path to its service.</p><div class="mports"><span class="pub">:8000</span><span class="int">:80</span></div></div></div>
-        <div class="mconnector" data-flow="nginx-users"><div class="line"></div><div class="flow-dot"></div></div>
+        <div class="mconnector" data-flow="nginx-users" data-flow-back="nginx-users-back"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#34C98E"><div class="mtile"><svg aria-hidden="true"><use href="#i-user"/></svg></div><div><h3>user-service</h3><p>CRUD /users backed by users_db.</p><div class="mports"><span class="int">:3001</span></div></div></div>
-        <div class="mconnector" data-flow="users-db"><div class="line"></div><div class="flow-dot"></div></div>
+        <div class="mconnector" data-flow="users-db" data-flow-back="users-db-back"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#7C93A6"><div class="mtile"><svg aria-hidden="true"><use href="#t-pg"/></svg></div><div><h3>postgres-users</h3><p>Dedicated Postgres 17 · users_db.</p><div class="mports"><span class="int">:5432</span></div></div></div>
         <div class="mconnector mconnector--no-arrow" data-flow="users-volume"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mvol" data-flow="users-volume"><strong>pgdata-users</strong><span>/var/lib/postgresql/data</span></div>
-        <div class="mconnector" data-flow="nginx-products"><div class="line"></div><div class="flow-dot"></div></div>
+        <div class="mconnector" data-flow="nginx-products" data-flow-back="nginx-products-back"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#2496ED"><div class="mtile"><svg aria-hidden="true"><use href="#i-box"/></svg></div><div><h3>product-service</h3><p>CRUD /products backed by products_db.</p><div class="mports"><span class="int">:3002</span></div></div></div>
-        <div class="mconnector" data-flow="products-db"><div class="line"></div><div class="flow-dot"></div></div>
+        <div class="mconnector" data-flow="products-db" data-flow-back="products-db-back"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#7C93A6"><div class="mtile"><svg aria-hidden="true"><use href="#t-pg"/></svg></div><div><h3>postgres-products</h3><p>Dedicated Postgres 17 · products_db.</p><div class="mports"><span class="int">:5432</span></div></div></div>
         <div class="mconnector mconnector--no-arrow" data-flow="products-volume"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mvol" data-flow="products-volume"><strong>pgdata-products</strong><span>/var/lib/postgresql/data</span></div>
-        <div class="mconnector" data-flow="nginx-orders"><div class="line"></div><div class="flow-dot"></div></div>
+        <div class="mconnector" data-flow="nginx-orders" data-flow-back="nginx-orders-back"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#F5820B"><div class="mtile"><svg aria-hidden="true"><use href="#i-cart"/></svg></div><div><h3>order-service</h3><p>CRUD /orders backed by orders_db.</p><div class="mports"><span class="int">:3003</span></div></div></div>
-        <div class="mconnector" data-flow="orders-db"><div class="line"></div><div class="flow-dot"></div></div>
+        <div class="mconnector" data-flow="orders-db" data-flow-back="orders-db-back"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#7C93A6"><div class="mtile"><svg aria-hidden="true"><use href="#t-pg"/></svg></div><div><h3>postgres-orders</h3><p>Dedicated Postgres 17 · orders_db.</p><div class="mports"><span class="int">:5432</span></div></div></div>
         <div class="mconnector mconnector--no-arrow" data-flow="orders-volume"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mvol" data-flow="orders-volume"><strong>pgdata-orders</strong><span>/var/lib/postgresql/data</span></div>
-        <div class="mconnector" data-flow="nginx-inventory"><div class="line"></div><div class="flow-dot"></div></div>
+        <div class="mconnector" data-flow="nginx-inventory" data-flow-back="nginx-inventory-back"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#2DD4BF"><div class="mtile"><svg aria-hidden="true"><use href="#i-archive"/></svg></div><div><h3>inventory-service</h3><p>CRUD /inventory backed by inventory_db.</p><div class="mports"><span class="int">:3004</span></div></div></div>
-        <div class="mconnector" data-flow="inventory-db"><div class="line"></div><div class="flow-dot"></div></div>
+        <div class="mconnector" data-flow="inventory-db" data-flow-back="inventory-db-back"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#7C93A6"><div class="mtile"><svg aria-hidden="true"><use href="#t-pg"/></svg></div><div><h3>postgres-inventory</h3><p>Dedicated Postgres 17 · inventory_db.</p><div class="mports"><span class="int">:5432</span></div></div></div>
         <div class="mconnector mconnector--no-arrow" data-flow="inventory-volume"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mvol" data-flow="inventory-volume"><strong>pgdata-inventory</strong><span>/var/lib/postgresql/data</span></div>
-        <div class="mconnector" data-flow="nginx-reviews"><div class="line"></div><div class="flow-dot"></div></div>
+        <div class="mconnector" data-flow="nginx-reviews" data-flow-back="nginx-reviews-back"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#B07CFF"><div class="mtile"><svg aria-hidden="true"><use href="#i-star"/></svg></div><div><h3>review-service</h3><p>CRUD /reviews backed by reviews_db.</p><div class="mports"><span class="int">:3005</span></div></div></div>
-        <div class="mconnector" data-flow="reviews-db"><div class="line"></div><div class="flow-dot"></div></div>
+        <div class="mconnector" data-flow="reviews-db" data-flow-back="reviews-db-back"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mnode" style="--accent:#7C93A6"><div class="mtile"><svg aria-hidden="true"><use href="#t-pg"/></svg></div><div><h3>postgres-reviews</h3><p>Dedicated Postgres 17 · reviews_db.</p><div class="mports"><span class="int">:5432</span></div></div></div>
         <div class="mconnector mconnector--no-arrow" data-flow="reviews-volume"><div class="line"></div><div class="flow-dot"></div></div>
         <div class="mvol" data-flow="reviews-volume"><strong>pgdata-reviews</strong><span>/var/lib/postgresql/data</span></div>
@@ -482,11 +550,22 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
   var demoBtn = document.getElementById('demoBtn');
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function later(fn, ms){ pending.push(setTimeout(fn, ms)); }
+  function triggerFlowBack(flow){
+    var nodes = document.querySelectorAll('[data-flow="' + flow + '"]');
+    var mNodes = document.querySelectorAll('[data-flow-back="' + flow + '"]');
+    if (!nodes.length && !mNodes.length) return;
+    nodes.forEach(function(n){ n.classList.add('is-active'); });
+    mNodes.forEach(function(n){ n.classList.add('is-active'); n.classList.add('is-reverse'); });
+    setTimeout(function(){
+      nodes.forEach(function(n){ n.classList.remove('is-active'); });
+      mNodes.forEach(function(n){ n.classList.remove('is-active'); n.classList.remove('is-reverse'); });
+    }, 900);
+  }
   function triggerLoop(svc){
     var fwd = ['client-nginx', 'nginx-' + svc, svc + '-db', svc + '-volume'];
-    var back = [svc + '-db', 'nginx-' + svc, 'client-nginx'];
+    var back = [svc + '-db-back', 'nginx-' + svc + '-back', 'client-nginx-back'];
     fwd.forEach(function(f, i){ later(function(){ triggerFlow(f); }, i * HOP); });
-    back.forEach(function(f, i){ later(function(){ triggerFlow(f); }, fwd.length * HOP + RESPONSE_GAP + i * HOP); });
+    back.forEach(function(f, i){ later(function(){ triggerFlowBack(f); }, fwd.length * HOP + RESPONSE_GAP + i * HOP); });
   }
   function triggerRandomLoop(){
     if (document.hidden) return;
