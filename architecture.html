@@ -56,6 +56,10 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
 .t-vol-title{font-family:var(--sans);font-weight:700;font-size:14px;fill:var(--public)}
 .flow{fill:none;stroke:var(--docker);stroke-width:1.8;stroke-linecap:round;stroke-dasharray:9 7;opacity:.28}
 .flow.is-active{opacity:.85;animation:dash 1.4s linear 2}
+.flow.is-slow{stroke:#FBBF24}
+.flow.is-error{stroke:#F87171;opacity:.9}
+.flow-pulse.is-slow circle{fill:#FBBF24}
+.flow-pulse.is-error circle{fill:#F87171}
 @keyframes dash{to{stroke-dashoffset:-32}}
 .flow-pulse{display:none}
 .flow-pulse.is-active{display:block}
@@ -93,6 +97,11 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
 .mconnector .lbl{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:11.5px;color:#CFE2F0;background:var(--bg-2);border:1px solid var(--line);border-radius:10px;padding:5px 10px;white-space:nowrap}
 .mconnector .flow-dot{position:absolute;left:-3px;top:0;width:8px;height:8px;border-radius:50%;background:var(--docker);opacity:0}
 .mconnector.is-active .flow-dot{opacity:1;animation:mobile-flow 1.2s linear infinite}
+.mconnector.is-slow .line{background:#FBBF24;opacity:.95}
+.mconnector.is-slow .flow-dot{background:#FBBF24}
+.mconnector.is-error .line{background:#F87171;opacity:.95}
+.mconnector.is-error .flow-dot{background:#F87171}
+.visually-hidden{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 @keyframes mobile-flow{from{top:0;opacity:.45}45%{opacity:1}to{top:calc(100% - 8px);opacity:.45}}
 .mconnector.is-reverse .line::after{bottom:auto;top:-1px;border:5px solid transparent;border-bottom:7px solid var(--docker)}
 .mconnector.is-reverse.is-active .flow-dot{animation-name:mobile-flow-rev}
@@ -111,11 +120,11 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
 </style>
 </head>
 <body>
-<!-- Static documentation asset: Docker Compose does not serve this file by default; open it directly or host it separately. -->
+<!-- Static file: open directly or host separately. Live telemetry polls GET /api/* via :8000 (nginx sends CORS headers). -->
 <div class="wrap">
   <header class="masthead">
     <h1>docker-microservices architecture</h1>
-    <p>Five Express CRUD services behind an nginx reverse proxy, each with a dedicated Postgres container. Public entry is <code>:8000</code>; everything else resolves on the Compose network.</p>
+    <p>Five Express CRUD services behind an nginx reverse proxy, each with a dedicated Postgres container. Public entry is <code>:8000</code>; everything else resolves on the Compose network. Flow intensity reflects live <code>GET /api/*</code> polls — hover a service for its latest status.</p>
   </header>
 
   <section class="panel" id="panel" aria-label="Architecture diagram">
@@ -497,7 +506,9 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
     <span><span class="swatch sw-pub"></span>public port</span>
     <span><span class="swatch sw-int"></span>internal port</span>
     <span><span class="sw-flow"></span>live request flow</span>
+    <span id="liveStatus" role="status">live telemetry: connecting…</span>
   </div>
+  <p id="telemetryLog" class="visually-hidden" aria-live="polite"></p>
 </div>
 
 <script>
@@ -530,15 +541,147 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
     }, 900);
   }
   var SERVICES = ['users', 'products', 'orders', 'inventory', 'reviews'];
+  var SERVICE_TITLES = {users: 'user-service', products: 'product-service', orders: 'order-service', inventory: 'inventory-service', reviews: 'review-service'};
   var HOP = 500;
   var LOOP_INTERVAL = 4000;
   var DOUBLE_CHANCE = 0.3;
   var RESPONSE_GAP = 250;
+  var POLL_INTERVAL = 5000;
+  var POLL_STAGGER = 350;
+  var REQUEST_TIMEOUT = 4000;
+  var SLOW_MS = 500;
+  var MAX_EVENTS = 20;
   var demoTimer = null;
+  var liveTimer = null;
   var pending = [];
   var demoBtn = document.getElementById('demoBtn');
+  var liveStatus = document.getElementById('liveStatus');
+  var telemetryLog = document.getElementById('telemetryLog');
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var mode = 'live';
+  var API_BASE = resolveApiBase();
+  var stats = {users: newStat(), products: newStat(), orders: newStat(), inventory: newStat(), reviews: newStat()};
+  var recentEvents = [];
+  var nodeTitles = {users: [], products: [], orders: [], inventory: [], reviews: []};
+  var roundOk = 0;
+  var roundsDone = 0;
+  function newStat(){ return {requests: 0, errors: 0, lastStatus: 'pending', lastLatency: null}; }
   function later(fn, ms){ pending.push(setTimeout(fn, ms)); }
+  function clearPending(){ pending.forEach(clearTimeout); pending = []; }
+  function resolveApiBase(){
+    try {
+      var params = new URLSearchParams(window.location.search);
+      var override = params.get('api');
+      if (override) return override.replace(/\/$/, '');
+      if (window.location.protocol.indexOf('http') === 0 && window.location.port === '8000') return window.location.origin + '/api';
+    } catch (e) {}
+    return 'http://localhost:8000/api';
+  }
+  function rememberBaseTitles(){
+    Array.prototype.forEach.call(document.querySelectorAll('rect title'), function(t){
+      SERVICES.forEach(function(svc){
+        if (t.textContent.indexOf(SERVICE_TITLES[svc]) === 0) nodeTitles[svc].push({el: t, base: t.textContent});
+      });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.mnode[title]'), function(n){
+      SERVICES.forEach(function(svc){
+        if (n.getAttribute('title').indexOf(SERVICE_TITLES[svc]) === 0) nodeTitles[svc].push({el: n, base: n.getAttribute('title')});
+      });
+    });
+  }
+  function flagFlows(svc, cls){
+    var names = ['nginx-' + svc, svc + '-db', 'nginx-' + svc + '-back', svc + '-db-back'];
+    var els = [];
+    names.forEach(function(name){
+      Array.prototype.forEach.call(document.querySelectorAll('[data-flow="' + name + '"]'), function(n){ els.push(n); });
+      Array.prototype.forEach.call(document.querySelectorAll('[data-flow-back="' + name + '"]'), function(n){ els.push(n); });
+    });
+    if (!els.length) return;
+    els.forEach(function(n){ n.classList.add(cls); });
+    setTimeout(function(){ els.forEach(function(n){ n.classList.remove(cls); }); }, 900);
+  }
+  function triggerLiveLoop(svc, ok, slow){
+    if (reduceMotion || document.hidden) return;
+    triggerLoop(svc);
+    if (!ok) flagFlows(svc, 'is-error');
+    else if (slow) flagFlows(svc, 'is-slow');
+  }
+  function updateNodeTitle(svc){
+    var stat = stats[svc];
+    var suffix = 'live: ' + stat.requests + ' req, ' + stat.errors + ' err, last ' + stat.lastStatus + (stat.lastLatency === null ? '' : ' ' + stat.lastLatency + 'ms');
+    nodeTitles[svc].forEach(function(item){
+      if (item.el.textContent !== undefined && item.el.tagName.toLowerCase() === 'title') item.el.textContent = item.base + ' · ' + suffix;
+      else item.el.setAttribute('title', item.base + ' · ' + suffix);
+    });
+  }
+  function announceEvent(svc, status, latency){
+    if (!telemetryLog) return;
+    telemetryLog.textContent = 'GET /api/' + svc + ' ' + status + ' ' + latency + 'ms';
+  }
+  function updateLiveStatus(){
+    if (!liveStatus) return;
+    if (mode === 'paused') liveStatus.textContent = 'live telemetry: paused';
+    else if (mode === 'sim') liveStatus.textContent = 'live telemetry: demo';
+    else if (roundsDone === 0) liveStatus.textContent = 'live telemetry: connecting…';
+    else if (roundOk > 0) liveStatus.textContent = 'live telemetry: live';
+    else liveStatus.textContent = 'live telemetry: live (stack unreachable — demo)';
+  }
+  function handleResult(svc, ok, status, latency){
+    var stat = stats[svc];
+    stat.requests += 1;
+    stat.lastStatus = status;
+    stat.lastLatency = latency;
+    if (!ok) stat.errors += 1; else roundOk += 1;
+    recentEvents.push({svc: svc, status: status, latency: latency});
+    if (recentEvents.length > MAX_EVENTS) recentEvents.shift();
+    updateNodeTitle(svc);
+    announceEvent(svc, status, latency);
+    triggerLiveLoop(svc, ok, latency > SLOW_MS);
+    updateLiveStatus();
+  }
+  function pollOne(svc){
+    if (mode !== 'live' || document.hidden) return;
+    var url = API_BASE + '/' + svc;
+    var start = performance.now();
+    var controller = new AbortController();
+    var timeout = setTimeout(function(){ controller.abort(); }, REQUEST_TIMEOUT);
+    fetch(url, {signal: controller.signal}).then(function(res){
+      clearTimeout(timeout);
+      handleResult(svc, res.ok, res.status, Math.round(performance.now() - start));
+    }).catch(function(){
+      clearTimeout(timeout);
+      handleResult(svc, false, 'unreachable', Math.round(performance.now() - start));
+    });
+  }
+  function checkRound(){
+    if (mode !== 'live') return;
+    roundsDone += 1;
+    if (roundOk === 0 && !reduceMotion && !document.hidden) triggerRandomLoop();
+    updateLiveStatus();
+  }
+  function pollAll(){
+    if (mode !== 'live' || document.hidden) return;
+    roundOk = 0;
+    SERVICES.forEach(function(svc, i){ later(function(){ pollOne(svc); }, i * POLL_STAGGER); });
+    later(checkRound, SERVICES.length * POLL_STAGGER + REQUEST_TIMEOUT + 500);
+  }
+  function syncModeUI(){
+    if (mode === 'live') { demoBtn.textContent = 'Live: on'; demoBtn.setAttribute('aria-pressed', 'true'); }
+    else if (mode === 'sim') { demoBtn.textContent = 'Demo: on'; demoBtn.setAttribute('aria-pressed', 'true'); }
+    else { demoBtn.textContent = 'Paused'; demoBtn.setAttribute('aria-pressed', 'false'); }
+    demoBtn.title = 'Switch telemetry mode (live → demo → paused)';
+    updateLiveStatus();
+  }
+  function setMode(next){
+    mode = next;
+    if (demoTimer !== null) { clearInterval(demoTimer); demoTimer = null; }
+    if (liveTimer !== null) { clearInterval(liveTimer); liveTimer = null; }
+    clearPending();
+    if (mode === 'live') { pollAll(); liveTimer = setInterval(pollAll, POLL_INTERVAL); }
+    else if (mode === 'sim' && !reduceMotion) { triggerRandomLoop(); demoTimer = setInterval(triggerRandomLoop, LOOP_INTERVAL); }
+    syncModeUI();
+  }
+  function cycleMode(){ setMode(mode === 'live' ? 'sim' : mode === 'sim' ? 'paused' : 'live'); }
   function triggerFlowBack(flow){
     var nodes = document.querySelectorAll('[data-flow="' + flow + '"]');
     var mNodes = document.querySelectorAll('[data-flow-back="' + flow + '"]');
@@ -566,30 +709,12 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
       triggerLoop(b);
     }
   }
-  function syncDemoBtn(){
-    var on = demoTimer !== null;
-    demoBtn.textContent = on ? 'Pause demo' : 'Play demo';
-    demoBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
-  }
-  function startDemo(){
-    if (demoTimer !== null || reduceMotion) return;
-    triggerRandomLoop();
-    demoTimer = setInterval(triggerRandomLoop, LOOP_INTERVAL);
-    syncDemoBtn();
-  }
-  function stopDemo(){
-    if (demoTimer !== null) { clearInterval(demoTimer); demoTimer = null; }
-    pending.forEach(clearTimeout);
-    pending = [];
-    syncDemoBtn();
-  }
-  demoBtn.addEventListener('click', function(){
-    if (demoTimer !== null) stopDemo(); else startDemo();
-  });
-  syncDemoBtn();
-  if (!reduceMotion) startDemo();
+  demoBtn.addEventListener('click', cycleMode);
+  rememberBaseTitles();
+  setMode('live');
   document.addEventListener('visibilitychange', function(){
-    if (document.hidden) { pending.forEach(clearTimeout); pending = []; }
+    if (document.hidden) { clearPending(); }
+    else if (mode === 'live') { pollAll(); }
   });
 })();
 </script>
