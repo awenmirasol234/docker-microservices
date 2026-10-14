@@ -172,23 +172,21 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
       <use href="#t-docker" x="272" y="39" width="16" height="16" aria-hidden="true"/>
       <text class="t-net-title" x="296" y="52">docker-microservices_default</text>
       <text class="t-net-sub" x="296" y="70">compose network · 11 containers</text>
-      <text class="t-net-note" x="1372" y="52">dashed = internal DNS</text>
+
 
       <!-- client (outside) -->
       <rect class="node-outside" filter="url(#depth)" x="40" y="305" width="170" height="110" rx="16"><title>You — curl/browser on host · public port 8000</title></rect>
       <rect x="40" y="305" width="5" height="110" fill="#7C93A6" clip-path="url(#c-client)"/>
-      <use href="#i-globe" x="56" y="315" width="30" height="30" style="color:#7C93A6;opacity:.9" aria-hidden="true"/>
-      <text class="t-title" x="92" y="348">You</text>
-      <text class="t-mono" x="92" y="368">curl � browser</text>
+      <use href="#i-globe" x="52" y="328" width="64" height="64" style="color:#7C93A6;opacity:.9" aria-hidden="true"/>
+      <text class="t-title" x="130" y="372">You</text>
 
-      <text class="t-net-note" x="40" y="440">host network · outside</text>
 
       <!-- nginx -->
       <rect class="node" filter="url(#depth)" x="260" y="305" width="220" height="110" rx="16"><title>nginx — reverse proxy · public :8000 → internal :80</title></rect>
       <rect x="260" y="305" width="5" height="110" fill="#2496ED" clip-path="url(#c-nginx)"/>
-      <use href="#t-nginx" x="276" y="315" width="30" height="30" opacity=".9" aria-hidden="true"/>
-      <text class="t-title" x="312" y="348">nginx</text>
-      <text class="t-mono" x="312" y="368">reverse proxy</text>
+      <use href="#t-nginx" x="272" y="328" width="64" height="64" opacity=".9" aria-hidden="true"/>
+      <text class="t-title" x="350" y="372">nginx</text>
+      <text class="t-mono" x="350" y="392">reverse proxy</text>
 
 
 
@@ -196,51 +194,41 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
       <g>
         <rect class="node" filter="url(#depth)" x="610" y="80" width="300" height="100" rx="16"><title>user-service — CRUD /users · users_db · internal :3001</title></rect>
         <rect x="610" y="80" width="5" height="100" fill="#34C98E" clip-path="url(#c-u)"/>
-        <use href="#i-user" x="626" y="90" width="30" height="30" style="color:#34C98E;opacity:.9" aria-hidden="true"/>
-        <use href="#t-node" x="854" y="148" width="20" height="23" aria-hidden="true"/>
-        <use href="#t-express" x="878" y="150" width="16" height="16" style="fill:#E9F1F7" aria-hidden="true"/>
-        <text class="t-title" x="666" y="128">user-service</text>
-        <text class="t-mono" x="666" y="148">CRUD /users · users_db</text>
+        <use href="#i-user" x="622" y="98" width="64" height="64" style="color:#34C98E;opacity:.9" aria-hidden="true"/>
+        <text class="t-title" x="700" y="128">user-service</text>
+        <text class="t-mono" x="700" y="148">/users</text>
 
       </g>
       <g>
         <rect class="node" filter="url(#depth)" x="610" y="200" width="300" height="100" rx="16"><title>product-service — CRUD /products · products_db · internal :3002</title></rect>
         <rect x="610" y="200" width="5" height="100" fill="#2496ED" clip-path="url(#c-p)"/>
-        <use href="#i-box" x="626" y="210" width="30" height="30" style="color:#2496ED;opacity:.9" aria-hidden="true"/>
-        <use href="#t-node" x="854" y="268" width="20" height="23" aria-hidden="true"/>
-        <use href="#t-express" x="878" y="270" width="16" height="16" style="fill:#E9F1F7" aria-hidden="true"/>
-        <text class="t-title" x="666" y="248">product-service</text>
-        <text class="t-mono" x="666" y="268">CRUD /products · products_db</text>
+        <use href="#i-box" x="622" y="218" width="64" height="64" style="color:#2496ED;opacity:.9" aria-hidden="true"/>
+        <text class="t-title" x="700" y="248">product-service</text>
+        <text class="t-mono" x="700" y="268">/products</text>
 
       </g>
       <g>
         <rect class="node" filter="url(#depth)" x="610" y="320" width="300" height="100" rx="16"><title>order-service — CRUD /orders · orders_db · internal :3003</title></rect>
         <rect x="610" y="320" width="5" height="100" fill="#F5820B" clip-path="url(#c-o)"/>
-        <use href="#i-cart" x="626" y="330" width="30" height="30" style="color:#F5820B;opacity:.9" aria-hidden="true"/>
-        <use href="#t-node" x="854" y="388" width="20" height="23" aria-hidden="true"/>
-        <use href="#t-express" x="878" y="390" width="16" height="16" style="fill:#E9F1F7" aria-hidden="true"/>
-        <text class="t-title" x="666" y="368">order-service</text>
-        <text class="t-mono" x="666" y="388">CRUD /orders · orders_db</text>
+        <use href="#i-cart" x="622" y="338" width="64" height="64" style="color:#F5820B;opacity:.9" aria-hidden="true"/>
+        <text class="t-title" x="700" y="368">order-service</text>
+        <text class="t-mono" x="700" y="388">/orders</text>
 
       </g>
       <g>
         <rect class="node" filter="url(#depth)" x="610" y="440" width="300" height="100" rx="16"><title>inventory-service — CRUD /inventory · inventory_db · internal :3004</title></rect>
         <rect x="610" y="440" width="5" height="100" fill="#2DD4BF" clip-path="url(#c-i)"/>
-        <use href="#i-archive" x="626" y="450" width="30" height="30" style="color:#2DD4BF;opacity:.9" aria-hidden="true"/>
-        <use href="#t-node" x="854" y="508" width="20" height="23" aria-hidden="true"/>
-        <use href="#t-express" x="878" y="510" width="16" height="16" style="fill:#E9F1F7" aria-hidden="true"/>
-        <text class="t-title" x="666" y="488">inventory-service</text>
-        <text class="t-mono" x="666" y="508">CRUD /inventory · inventory_db</text>
+        <use href="#i-archive" x="622" y="458" width="64" height="64" style="color:#2DD4BF;opacity:.9" aria-hidden="true"/>
+        <text class="t-title" x="700" y="488">inventory-service</text>
+        <text class="t-mono" x="700" y="508">/inventory</text>
 
       </g>
       <g>
         <rect class="node" filter="url(#depth)" x="610" y="560" width="300" height="100" rx="16"><title>review-service — CRUD /reviews · reviews_db · internal :3005</title></rect>
         <rect x="610" y="560" width="5" height="100" fill="#B07CFF" clip-path="url(#c-r)"/>
-        <use href="#i-star" x="626" y="570" width="30" height="30" style="color:#B07CFF;opacity:.9" aria-hidden="true"/>
-        <use href="#t-node" x="854" y="628" width="20" height="23" aria-hidden="true"/>
-        <use href="#t-express" x="878" y="630" width="16" height="16" style="fill:#E9F1F7" aria-hidden="true"/>
-        <text class="t-title" x="666" y="608">review-service</text>
-        <text class="t-mono" x="666" y="628">CRUD /reviews · reviews_db</text>
+        <use href="#i-star" x="622" y="578" width="64" height="64" style="color:#B07CFF;opacity:.9" aria-hidden="true"/>
+        <text class="t-title" x="700" y="608">review-service</text>
+        <text class="t-mono" x="700" y="628">/reviews</text>
 
       </g>
 
@@ -248,68 +236,68 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
       <g>
         <rect class="node" filter="url(#depth)" x="1010" y="98" width="280" height="64" rx="14"><title>postgres-users — users_db · internal :5432</title></rect>
         <rect x="1010" y="98" width="5" height="64" fill="#7C93A6" clip-path="url(#c-dbu)"/>
-        <use href="#t-pg" x="1026" y="106" width="24" height="24" opacity=".9" aria-hidden="true"/>
-        <text class="t-title-sm" x="1064" y="132">postgres-users</text>
-        <text class="t-mono-sm" x="1064" y="152">users_db</text>
+        <use href="#t-pg" x="1022" y="110" width="40" height="40" opacity=".9" aria-hidden="true"/>
+        <text class="t-title-sm" x="1076" y="132">postgres-users</text>
+        <text class="t-mono-sm" x="1076" y="152">users_db</text>
       </g>
       <g>
         <rect class="node" filter="url(#depth)" x="1010" y="218" width="280" height="64" rx="14"><title>postgres-products — products_db · internal :5432</title></rect>
         <rect x="1010" y="218" width="5" height="64" fill="#7C93A6" clip-path="url(#c-dbp)"/>
-        <use href="#t-pg" x="1026" y="226" width="24" height="24" opacity=".9" aria-hidden="true"/>
-        <text class="t-title-sm" x="1064" y="244">postgres-products</text>
-        <text class="t-mono-sm" x="1064" y="272">products_db</text>
+        <use href="#t-pg" x="1022" y="230" width="40" height="40" opacity=".9" aria-hidden="true"/>
+        <text class="t-title-sm" x="1076" y="244">postgres-products</text>
+        <text class="t-mono-sm" x="1076" y="272">products_db</text>
       </g>
       <g>
         <rect class="node" filter="url(#depth)" x="1010" y="338" width="280" height="64" rx="14"><title>postgres-orders — orders_db · internal :5432</title></rect>
         <rect x="1010" y="338" width="5" height="64" fill="#7C93A6" clip-path="url(#c-dbo)"/>
-        <use href="#t-pg" x="1026" y="346" width="24" height="24" opacity=".9" aria-hidden="true"/>
-        <text class="t-title-sm" x="1064" y="372">postgres-orders</text>
-        <text class="t-mono-sm" x="1064" y="392">orders_db</text>
+        <use href="#t-pg" x="1022" y="350" width="40" height="40" opacity=".9" aria-hidden="true"/>
+        <text class="t-title-sm" x="1076" y="372">postgres-orders</text>
+        <text class="t-mono-sm" x="1076" y="392">orders_db</text>
       </g>
       <g>
         <rect class="node" filter="url(#depth)" x="1010" y="458" width="280" height="64" rx="14"><title>postgres-inventory — inventory_db · internal :5432</title></rect>
         <rect x="1010" y="458" width="5" height="64" fill="#7C93A6" clip-path="url(#c-dbi)"/>
-        <use href="#t-pg" x="1026" y="466" width="24" height="24" opacity=".9" aria-hidden="true"/>
-        <text class="t-title-sm" x="1064" y="492">postgres-inventory</text>
-        <text class="t-mono-sm" x="1064" y="512">inventory_db</text>
+        <use href="#t-pg" x="1022" y="470" width="40" height="40" opacity=".9" aria-hidden="true"/>
+        <text class="t-title-sm" x="1076" y="492">postgres-inventory</text>
+        <text class="t-mono-sm" x="1076" y="512">inventory_db</text>
       </g>
       <g>
         <rect class="node" filter="url(#depth)" x="1010" y="578" width="280" height="64" rx="14"><title>postgres-reviews — reviews_db · internal :5432</title></rect>
         <rect x="1010" y="578" width="5" height="64" fill="#7C93A6" clip-path="url(#c-dbr)"/>
-        <use href="#t-pg" x="1026" y="586" width="24" height="24" opacity=".9" aria-hidden="true"/>
-        <text class="t-title-sm" x="1064" y="612">postgres-reviews</text>
-        <text class="t-mono-sm" x="1064" y="632">reviews_db</text>
+        <use href="#t-pg" x="1022" y="590" width="40" height="40" opacity=".9" aria-hidden="true"/>
+        <text class="t-title-sm" x="1076" y="612">postgres-reviews</text>
+        <text class="t-mono-sm" x="1076" y="632">reviews_db</text>
       </g>
 
       <!-- volumes, one per database -->
       <g>
         <rect class="vol" filter="url(#depth)" data-flow="users-volume" x="1410" y="98" width="260" height="64" rx="14"><title>pgdata-users — mount /var/lib/postgresql/data</title></rect>
-        <use href="#i-disk" x="1426" y="106" width="24" height="24" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
-        <text class="t-vol-title" x="1458" y="124" font-size="13">pgdata-users</text>
+        <use href="#i-disk" x="1422" y="110" width="40" height="40" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
+        <text class="t-vol-title" x="1476" y="134" font-size="13">pgdata-users</text>
 
       </g>
       <g>
         <rect class="vol" filter="url(#depth)" data-flow="products-volume" x="1410" y="218" width="260" height="64" rx="14"><title>pgdata-products — mount /var/lib/postgresql/data</title></rect>
-        <use href="#i-disk" x="1426" y="226" width="24" height="24" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
-        <text class="t-vol-title" x="1458" y="244" font-size="13">pgdata-products</text>
+        <use href="#i-disk" x="1422" y="230" width="40" height="40" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
+        <text class="t-vol-title" x="1476" y="254" font-size="13">pgdata-products</text>
 
       </g>
       <g>
         <rect class="vol" filter="url(#depth)" data-flow="orders-volume" x="1410" y="338" width="260" height="64" rx="14"><title>pgdata-orders — mount /var/lib/postgresql/data</title></rect>
-        <use href="#i-disk" x="1426" y="346" width="24" height="24" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
-        <text class="t-vol-title" x="1458" y="364" font-size="13">pgdata-orders</text>
+        <use href="#i-disk" x="1422" y="350" width="40" height="40" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
+        <text class="t-vol-title" x="1476" y="374" font-size="13">pgdata-orders</text>
 
       </g>
       <g>
         <rect class="vol" filter="url(#depth)" data-flow="inventory-volume" x="1410" y="458" width="260" height="64" rx="14"><title>pgdata-inventory — mount /var/lib/postgresql/data</title></rect>
-        <use href="#i-disk" x="1426" y="466" width="24" height="24" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
-        <text class="t-vol-title" x="1458" y="484" font-size="13">pgdata-inventory</text>
+        <use href="#i-disk" x="1422" y="470" width="40" height="40" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
+        <text class="t-vol-title" x="1476" y="494" font-size="13">pgdata-inventory</text>
 
       </g>
       <g>
         <rect class="vol" filter="url(#depth)" data-flow="reviews-volume" x="1410" y="578" width="260" height="64" rx="14"><title>pgdata-reviews — mount /var/lib/postgresql/data</title></rect>
-        <use href="#i-disk" x="1426" y="586" width="24" height="24" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
-        <text class="t-vol-title" x="1458" y="604" font-size="13">pgdata-reviews</text>
+        <use href="#i-disk" x="1422" y="590" width="40" height="40" style="color:#F5B301;opacity:.9" aria-hidden="true"/>
+        <text class="t-vol-title" x="1476" y="614" font-size="13">pgdata-reviews</text>
 
       </g>
 
