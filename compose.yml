@@ -110,7 +110,9 @@ services:
         condition: service_healthy
 
   nginx:
-    build: ./nginx
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
     ports:
       - "8000:80"
     depends_on:

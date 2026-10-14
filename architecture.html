@@ -120,7 +120,7 @@ code{font-family:var(--mono);color:#CFE2F0;background:rgba(36,150,237,.12);borde
 </style>
 </head>
 <body>
-<!-- Static file: open directly or host separately. Live telemetry polls GET /api/* via :8000 (nginx sends CORS headers). -->
+<!-- Served by nginx at /architecture (same-origin /api/*); also opens directly via file:// with CORS fallback. -->
 <div class="wrap">
   <header class="masthead">
     <h1>docker-microservices architecture</h1>
