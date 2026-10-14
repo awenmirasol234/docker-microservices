@@ -15,11 +15,12 @@ Minimal Docker Compose demo: five Express CRUD services behind an nginx reverse 
   - `/api/orders` → `order-service:3003/orders`
   - `/api/inventory` → `inventory-service:3004/inventory`
   - `/api/reviews` → `review-service:3005/reviews`
+  - `/architecture` (and `/architecture/`) → static `architecture.html` diagram (`text/html`, `no-cache`), served same-origin so its live telemetry polls `/api/*` CORS-free
 - `postgres-*` — five Postgres 17 containers (`postgres-users`, `postgres-products`, `postgres-orders`, `postgres-inventory`, `postgres-reviews`), one database per service, each persisted in its own `pgdata-<name>` volume (`/var/lib/postgresql/data`)
 
 Each service connects via `DATABASE_URL=postgres://postgres:postgres@postgres-<name>:5432/<db>` and waits on its Postgres `pg_isready` healthcheck. Tables are auto-created on startup (`CREATE TABLE IF NOT EXISTS`); no migrations or init scripts.
 
-See `architecture.html` for a visual request-flow diagram (open it in a browser).
+Open `http://localhost:8000/architecture` in a browser for a visual request-flow diagram. Flow intensity reflects live `GET /api/*` polls (button cycles Live/Demo/Paused; slow responses glow amber, failures red; hover a service for its latest status).
 
 ## Prerequisites
 
@@ -46,6 +47,7 @@ docker compose restart nginx
 ## Verify
 
 ```bash
+curl -i localhost:8000/architecture
 curl localhost:8000/api/users
 curl localhost:8000/api/products
 curl localhost:8000/api/orders
@@ -109,5 +111,5 @@ docker compose down
 1. New dir with `server.js`, `package.json` (`express` + `pg`), `Dockerfile` (copy an existing service; there is no `.dockerignore` or lockfile in this repo)
 2. New `postgres-<name>` block with `POSTGRES_DB: <db>` and its own `pgdata-<name>` volume (the database is auto-created; no init script needed), plus a `pg_isready` healthcheck like the others
 3. Compose block with `DATABASE_URL` pointing at the new container + `depends_on` it healthy; add to nginx `depends_on`
-4. New `location /api/<name>` block in `nginx/nginx.conf`
+4. New `location /api/<name>` block in `nginx/nginx.conf` (the `= /architecture` static locations stay untouched)
 5. Document it here and in `AGENTS.md`
