@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>docker-microservices endpoints</title>
+<style>
+:root{
+  --bg:#0B1017; --panel:#111827; --line:#263247;
+  --ink:#EAF1FB; --muted:#9BAAC9;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:ui-monospace,"Cascadia Code","SF Mono",Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans)}
+.wrap{max-width:720px;margin:0 auto;padding:32px 24px 48px}
+h1{font-size:28px;letter-spacing:-0.015em;margin:0 0 8px}
+p{color:var(--muted);margin:0 0 20px;line-height:1.5}
+ul{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel)}
+li+li{border-top:1px solid var(--line)}
+a{display:block;padding:14px 16px;color:var(--ink);text-decoration:none;font-family:var(--mono);font-size:14px}
+a:hover{background:rgba(59,130,246,.10)}
+a span{display:block;font-family:var(--sans);font-size:13px;color:var(--muted);margin-top:4px}
+</style>
+</head>
+<body>
+<!-- Served by nginx at / (same-origin /api/* and /architecture). -->
+<div class="wrap">
+  <h1>docker-microservices endpoints</h1>
+  <p>Public entry for this Compose stack. Diagram plus five API collections.</p>
+  <ul>
+    <li><a href="/architecture">/architecture<span>Static architecture diagram with live telemetry</span></a></li>
+    <li><a href="/api/users">/api/users<span>user-service CRUD</span></a></li>
+    <li><a href="/api/products">/api/products<span>product-service CRUD</span></a></li>
+    <li><a href="/api/orders">/api/orders<span>order-service CRUD</span></a></li>
+    <li><a href="/api/inventory">/api/inventory<span>inventory-service CRUD</span></a></li>
+    <li><a href="/api/reviews">/api/reviews<span>review-service CRUD</span></a></li>
+  </ul>
+</div>
+</body>
+</html>

@@ -114,7 +114,7 @@ services:
       context: .
       dockerfile: ./nginx/Dockerfile
     ports:
-      - "8000:80"
+      - "8080:80"
     depends_on:
       - user-service
       - product-service
