@@ -27,7 +27,7 @@ Docker Compose (`compose.yml`, 11 containers) + Node 24 (`node:24-alpine`, Expre
 ## Gotchas
 - No `npm start` / test scripts in any `package.json`; use `node server.js`.
 - Inter-service hostnames (`*-service`, `postgres-*`) only resolve inside Compose network, not from host. From host, go through `localhost:8080/api/*`.
-- `architecture.html` resolves its telemetry base URL same-origin only on port `8000`, otherwise falling back to `http://localhost:8000/api` (`resolveApiBase`), so on host `8080` the diagram renders but its live polling points at a dead port until the file is updated.
+- `architecture.html` resolves its telemetry base URL to same-origin `/api` when served over http (`resolveApiBase`); `?api=<url>` overrides it, and a direct `file://` open falls back to `http://localhost:8080/api`.
 - `nginx.conf` maps one `location` per service (`/api/<name>` -> backend `/<name>`, subpaths forwarded) plus three exact-match static locations (`= /` via `try_files` to `index.html`, `= /architecture` alias file, `= /architecture/` via `try_files`); adding a service needs an app block + `DATABASE_URL` + a `postgres-<name>` container with `POSTGRES_DB` and its own volume + a `location` block + nginx `depends_on` (static locations untouched).
 - `PUT` requires the full body (same validation as `POST`); all errors are `{"error": ...}` (`400` invalid body, `404` unknown id).
 - Inventory duplicate `product_id` returns `400 {"error":"product already has inventory"}` on `POST` and `PUT`.

@@ -21,7 +21,7 @@ Minimal Docker Compose demo: five Express CRUD services behind an nginx reverse 
 
 Each service connects via `DATABASE_URL=postgres://postgres:postgres@postgres-<name>:5432/<db>` and waits on its Postgres `pg_isready` healthcheck. Tables are auto-created on startup (`CREATE TABLE IF NOT EXISTS`); no migrations or init scripts.
 
-Open `http://localhost:8080/architecture` in a browser for a visual request-flow diagram. Flow intensity reflects live `GET /api/*` polls (button cycles Live/Demo/Paused; slow responses glow amber, failures red; hover a service for its latest status). Note: `architecture.html`'s telemetry base URL still falls back to `http://localhost:8000/api` off port `8000` (`resolveApiBase`), so on host `8080` the diagram renders but shows failed polls until that is updated.
+Open `http://localhost:8080/architecture` in a browser for a visual request-flow diagram. Flow intensity reflects live `GET /api/*` polls (button cycles Live/Demo/Paused; slow responses glow amber, failures red; hover a service for its latest status). The page is served same-origin, so its telemetry polls `/api/*` on the same host and port with no CORS. Opened directly via `file://` it falls back to `http://localhost:8080/api` (`resolveApiBase`); override the base URL with `?api=<url>`.
 
 ## Prerequisites
 
